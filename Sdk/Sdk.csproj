@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <LangVersion>11</LangVersion>
+        <Nullable>enable</Nullable>
+        <AssemblyName>SourceSharp.Sdk</AssemblyName>
+        <RootNamespace>SourceSharp.Sdk</RootNamespace>
+        <PlatformTarget>x64</PlatformTarget>
+        <VersionPrefix>1.0</VersionPrefix>
+        <VersionSuffix>1</VersionSuffix>
+        <Version>$(VersionPrefix).$(VersionSuffix)</Version>
+        <PackageProjectUrl>https://github.com/SourceSharp</PackageProjectUrl>
+        <Copyright>©2023 Kyle, Bone</Copyright>
+        <RepositoryUrl>https://github.com/SourceSharp/runtime</RepositoryUrl>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+</Project>

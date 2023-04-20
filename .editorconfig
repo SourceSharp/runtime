@@ -1,0 +1,17 @@
+root = true
+indent_style = space
+end_of_line = lf
+trim_trailing_whitespace = true
+charset = "utf-8"
+
+[*.cs]
+csharp_style_namespace_declarations = file_scoped:error
+csharp_using_directive_placement = outside_namespace:error
+dotnet_diagnostic.CS4014.severity = error
+indent_size = 4
+
+[*.json]
+indent_size = 2
+
+[*.{xml,config}]
+indent_size = 2
