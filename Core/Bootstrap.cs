@@ -47,7 +47,8 @@ internal static class Bootstrap
         services.AddSingleton(configuration.GetSection("Core").Get<CoreConfig>() ??
                               throw new InvalidDataException("Core config is missing!"));
 
-        services.AddSingleton<ICore, CoreLogic>();
+        services.AddSingleton<ISourceSharp, SourceSharp>();
+        services.AddScoped<IShareSystem, ShareSystem>();
 
         services.AddSingleton<IGameEventListener, GameEventListener>();
         services.AddSingleton<IPluginManager, PluginManager>();

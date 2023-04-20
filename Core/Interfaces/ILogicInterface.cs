@@ -7,4 +7,7 @@ internal interface ILogicInterface
 {
     void Initialize(List<SourceSharpPlugin> plugins);
     void Shutdown();
+
+
+    void OnPluginUnload(SourceSharpPlugin plugin);
 }

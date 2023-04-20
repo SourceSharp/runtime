@@ -6,40 +6,49 @@
         <Nullable>enable</Nullable>
         <AssemblyName>SourceSharp.Core</AssemblyName>
         <RootNamespace>SourceSharp.Core</RootNamespace>
-        <PlatformTarget>x64</PlatformTarget>
         <VersionPrefix>1.0</VersionPrefix>
         <VersionSuffix>1</VersionSuffix>
         <Version>$(VersionPrefix).$(VersionSuffix)</Version>
         <PackageProjectUrl>https://github.com/SourceSharp</PackageProjectUrl>
         <Copyright>©2023 Kyle, Bone</Copyright>
         <RepositoryUrl>https://github.com/SourceSharp/runtime</RepositoryUrl>
-        <DnneNativeBinaryName>SourceSharp.runtime</DnneNativeBinaryName>
+        <DnneNativeBinaryName>SourceSharp.Runtime</DnneNativeBinaryName>
+        <Platforms>x64;x86</Platforms>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <PlatformTarget>x86</PlatformTarget>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <PlatformTarget>x86</PlatformTarget>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
     <ItemGroup>
-      <None Remove="config.json" />
-      <None Remove="CORE.CSPROJ~RF178FBC0.TMP.tmp" />
+        <None Remove="config.json" />
     </ItemGroup>
     <ItemGroup>
-      <EmbeddedResource Include="config.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
+        <EmbeddedResource Include="config.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="DNNE" Version="2.0.1" />
-      <PackageReference Include="McMaster.NETCore.Plugins" Version="1.4.0" />
-      <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+        <PackageReference Include="DNNE" Version="2.0.1" />
+        <PackageReference Include="McMaster.NETCore.Plugins" Version="1.4.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Sdk\Sdk.csproj" />
+        <ProjectReference Include="..\Sdk\Sdk.csproj" />
     </ItemGroup>
 </Project>

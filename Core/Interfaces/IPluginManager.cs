@@ -4,6 +4,5 @@ internal interface IPluginManager
 {
     void Initialize();
     void Shutdown();
-
     void Signal();
 }

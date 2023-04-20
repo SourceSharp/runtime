@@ -1,7 +1,6 @@
 ﻿using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
 using SourceSharp.Sdk.Attributes;
-using SourceSharp.Sdk.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +16,9 @@ internal class GameEventListener : IGameEventListener
     }
 
     private readonly Dictionary<string, List<PluginGameEvent>> _listener;
-    private readonly ICore _core;
 
-    public GameEventListener(ICore core)
+    public GameEventListener()
     {
-        _core = core;
         _listener = new();
     }
 
@@ -57,6 +54,27 @@ internal class GameEventListener : IGameEventListener
                 });
             }
         });
+    }
+
+    public void OnPluginUnload(SourceSharpPlugin plugin)
+    {
+        foreach (var (eventName, hooks) in _listener.Where(x => x.Value.Any(v => v.Plugin == plugin)))
+        {
+            for (var i = 0; i < hooks.Count; i++)
+            {
+                if (hooks[i].Plugin == plugin)
+                {
+                    hooks.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            if (!hooks.Any())
+            {
+                _listener.Remove(eventName);
+                break;
+            }
+        }
     }
 
     public void Shutdown()
