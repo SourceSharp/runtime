@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using SourceSharp.Core.Configurations;
 using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Modules;
-using SourceSharp.Sdk.Interfaces;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -47,8 +46,8 @@ internal static class Bootstrap
         services.AddSingleton(configuration.GetSection("Core").Get<CoreConfig>() ??
                               throw new InvalidDataException("Core config is missing!"));
 
-        services.AddSingleton<ISourceSharp, SourceSharp>();
-        services.AddScoped<IShareSystem, ShareSystem>();
+        services.AddSingleton<ISourceSharpBase, SourceSharp>();
+        services.AddScoped<IShareSystemBase, ShareSystem>();
 
         services.AddSingleton<IGameEventListener, GameEventListener>();
         services.AddSingleton<IPluginManager, PluginManager>();

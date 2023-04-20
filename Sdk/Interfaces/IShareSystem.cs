@@ -14,12 +14,12 @@ public interface IShareSystem
     /// </summary>
     /// <typeparam name="T">IRuntime实现的Interface</typeparam>
     /// <returns>IRuntime实现</returns>
-    T GetRequiredInterface<T>(uint version) where T : IRuntime;
+    T GetRequiredInterface<T>(uint version) where T : class, IRuntime;
 
     /// <summary>
     /// 获取可选的Interface, 可空
     /// </summary>
     /// <typeparam name="T">IRuntime实现的Interface</typeparam>
     /// <returns>IRuntime实现</returns>
-    T? GetInterface<T>(uint version) where T : IRuntime;
+    T? GetInterface<T>(uint version) where T : class, IRuntime;
 }

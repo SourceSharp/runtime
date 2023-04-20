@@ -15,12 +15,12 @@ namespace SourceSharp.Core;
 internal class PluginManager : IPluginManager
 {
     private readonly CoreConfig _config;
-    private readonly ISourceSharp _sourceSharp;
-    private readonly IShareSystem _shareSystem;
+    private readonly ISourceSharpBase _sourceSharp;
+    private readonly IShareSystemBase _shareSystem;
 
     private readonly List<SourceSharpPlugin> _plugins;
 
-    public PluginManager(CoreConfig config, ISourceSharp sourceSharp, IShareSystem shareSystem)
+    public PluginManager(CoreConfig config, ISourceSharpBase sourceSharp, IShareSystemBase shareSystem)
     {
         _config = config;
         _sourceSharp = sourceSharp;
@@ -129,16 +129,7 @@ internal class PluginManager : IPluginManager
     {
         foreach (var plugin in _plugins)
         {
-            try
-            {
-                plugin.Instance.OnShutdown();
-                plugin.Loader.Dispose();
-                plugin.Status = PluginStatus.None;
-            }
-            catch (Exception e)
-            {
-                _sourceSharp.LogError($"Error during shutting down on <{plugin.Name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
-            }
+            UnloadPlugin(plugin);
         }
 
         _plugins.Clear();
@@ -148,25 +139,45 @@ internal class PluginManager : IPluginManager
     {
         foreach (var plugin in _plugins)
         {
-            try
-            {
-                if (!plugin.Instance.OnLoad())
-                {
-                    throw new InvalidOperationException();
-                }
+            LoadPlugin(plugin);
+        }
+    }
 
-                plugin.Status = PluginStatus.Running;
-                _sourceSharp.PrintLine($"Plugin <{plugin.Name}> loaded.");
-            }
-            catch (Exception e)
+    private void LoadPlugin(SourceSharpPlugin plugin)
+    {
+        try
+        {
+            if (!plugin.Instance.OnLoad())
             {
-                plugin.Status = PluginStatus.Failed;
-
-                if (e is not InvalidOperationException)
-                {
-                    _sourceSharp.LogMessage($"Failed to load plugin <{plugin.Name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
-                }
+                throw new InvalidOperationException();
             }
+
+            plugin.Status = PluginStatus.Running;
+            _sourceSharp.PrintLine($"Plugin <{plugin.Name}> loaded.");
+        }
+        catch (Exception e)
+        {
+            plugin.Status = PluginStatus.Failed;
+
+            if (e is not InvalidOperationException)
+            {
+                _sourceSharp.LogMessage($"Failed to load plugin <{plugin.Name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
+            }
+        }
+    }
+
+    private void UnloadPlugin(SourceSharpPlugin plugin)
+    {
+        try
+        {
+            _shareSystem.CheckUnloadPluginInterfaces(plugin.Instance);
+            plugin.Instance.OnShutdown();
+            plugin.Loader.Dispose();
+            plugin.Status = PluginStatus.None;
+        }
+        catch (Exception e)
+        {
+            _sourceSharp.LogError($"Error during shutting down on <{plugin.Name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
         }
     }
 

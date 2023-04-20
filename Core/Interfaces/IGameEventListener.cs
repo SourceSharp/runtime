@@ -1,6 +1,6 @@
 ﻿namespace SourceSharp.Core.Interfaces;
 
-internal interface IGameEventListener : ILogicInterface
+internal interface IGameEventListener : IModuleBase
 {
 
 }

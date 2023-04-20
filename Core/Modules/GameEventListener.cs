@@ -1,5 +1,6 @@
 ﻿using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
+using SourceSharp.Sdk;
 using SourceSharp.Sdk.Attributes;
 using System;
 using System.Collections.Generic;
@@ -79,6 +80,12 @@ internal class GameEventListener : IGameEventListener
 
     public void Shutdown()
     {
-
+        throw new NotImplementedException();
     }
+
+    /*
+     *  IRuntime
+     */
+    public string GetInterfaceName() => SharedDefines.GameEventListenerInterfaceName;
+    public uint GetInterfaceVersion() => SharedDefines.GameEventListenerInterfaceVersion;
 }

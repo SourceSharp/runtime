@@ -1,11 +1,12 @@
-﻿using SourceSharp.Sdk.Interfaces;
+﻿using SourceSharp.Core.Interfaces;
+using SourceSharp.Sdk.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SourceSharp.Core.Modules;
+namespace SourceSharp.Core;
 
-internal class ShareSystem : IShareSystem
+internal class ShareSystem : ShareSystemBase
 {
     private class SharedInterface
     {
@@ -28,7 +29,7 @@ internal class ShareSystem : IShareSystem
         _interfaces = new();
     }
 
-    public void AddInterface(IRuntime @interface, IPlugin @plugin)
+    public override void AddInterface(IRuntime @interface, IPlugin @plugin)
     {
         var name = @interface.GetInterfaceName();
 
@@ -40,7 +41,7 @@ internal class ShareSystem : IShareSystem
         _interfaces.Add(new(@interface, @plugin));
     }
 
-    public T GetRequiredInterface<T>(uint version) where T : IRuntime
+    public override T GetRequiredInterface<T>(uint version)
     {
         var @interface = _interfaces.SingleOrDefault(x => x.GetType() == typeof(T)) ??
                          throw new NotImplementedException($"Interface <{nameof(T)}> not found.");
@@ -53,6 +54,13 @@ internal class ShareSystem : IShareSystem
         return (T)@interface.Interface;
     }
 
-    public T? GetInterface<T>(uint version) where T : IRuntime
+    public override T? GetInterface<T>(uint version) where T : class
         => (T?)_interfaces.SingleOrDefault(x => x.GetType() == typeof(T) && x.Interface.GetInterfaceVersion() >= version)?.Interface;
+
+    public override List<IRuntime> CheckUnloadPluginInterfaces(IPlugin plugin)
+    {
+        var interfaces = _interfaces.Where(x => x.Plugin == plugin).ToList();
+        _interfaces.RemoveAll(x => x.Plugin == plugin);
+        return interfaces.Select(x => x.Interface).ToList();
+    }
 }

@@ -1,6 +1,6 @@
 ﻿namespace SourceSharp.Core.Interfaces;
 
-internal interface ICommandListener : ILogicInterface
+internal interface ICommandListener : IModuleBase
 {
 
 }
