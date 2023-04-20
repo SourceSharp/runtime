@@ -14,6 +14,7 @@
         <Copyright>©2023 Kyle, Bone</Copyright>
         <RepositoryUrl>https://github.com/SourceSharp/runtime</RepositoryUrl>
         <DnneNativeBinaryName>SourceSharp.runtime</DnneNativeBinaryName>
+        <EnableDynamicLoading>true</EnableDynamicLoading>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
