@@ -12,7 +12,6 @@
         <PackageProjectUrl>https://github.com/SourceSharp</PackageProjectUrl>
         <Copyright>©2023 Kyle, Bone</Copyright>
         <RepositoryUrl>https://github.com/SourceSharp/runtime</RepositoryUrl>
-        <Platforms>x64;x86</Platforms>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
