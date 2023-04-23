@@ -1,7 +1,7 @@
 ﻿using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
 using SourceSharp.Sdk;
-using System.Collections.Generic;
+using System;
 
 namespace SourceSharp.Core.Modules;
 
@@ -12,19 +12,24 @@ internal class CommandListener : ICommandListener
 
     }
 
-    public void Initialize(List<SourceSharpPlugin> plugins)
+    public void Initialize()
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public void Shutdown()
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
-    public void OnPluginUnload(SourceSharpPlugin plugin)
+    public void OnPluginLoad(CPlugin plugin)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
+    }
+
+    public void OnPluginUnload(CPlugin plugin)
+    {
+        throw new NotImplementedException();
     }
 
     /*

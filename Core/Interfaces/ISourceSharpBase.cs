@@ -8,7 +8,10 @@ namespace SourceSharp.Core.Interfaces;
 
 internal interface ISourceSharpBase : ISourceSharp
 {
-
+    /// <summary>
+    /// 运行帧
+    /// </summary>
+    void RunFrame(int tickCount, float gameTime);
 }
 
 internal abstract class SourceSharpBase : ISourceSharpBase
@@ -17,7 +20,8 @@ internal abstract class SourceSharpBase : ISourceSharpBase
      *  IRuntime
      */
     public string GetInterfaceName() => SharedDefines.CoreInterfaceName;
-    public uint GetInterfaceVersion() => (uint)Assembly.GetExecutingAssembly()!.GetName()!.Version!.Major;
+    private readonly uint _versionNumber = (uint)Assembly.GetExecutingAssembly()!.GetName()!.Version!.Major;
+    public uint GetInterfaceVersion() => _versionNumber;
 
     /*
      * ISourceSharp
@@ -62,4 +66,22 @@ internal abstract class SourceSharpBase : ISourceSharpBase
         throw new NotImplementedException();
     }
 
+    public virtual int GetGameTickCount(bool readFromPtr = false)
+    {
+        throw new NotImplementedException();
+    }
+
+    public virtual int GetGameTime(bool readFromPtr = false)
+    {
+        throw new NotImplementedException();
+    }
+
+    /*
+     * ISourceSharpBase
+     */
+
+    public virtual void RunFrame(int tickCount, float gameTime)
+    {
+        throw new NotImplementedException();
+    }
 }
