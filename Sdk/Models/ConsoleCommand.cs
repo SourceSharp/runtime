@@ -2,7 +2,14 @@
 
 public sealed class ConsoleCommand
 {
-    public string[]? Args { get; set; }
-    public string? ArgString { get; set; }
-    public int ArgC { get; set; }
+    public string[] Args { get; }
+    public string ArgString { get; }
+    public int ArgC { get; }
+
+    public ConsoleCommand(string argString, string[] args, int argC)
+    {
+        ArgString = argString;
+        Args = args;
+        ArgC = argC;
+    }
 }

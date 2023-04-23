@@ -55,7 +55,4 @@
     <ItemGroup>
         <ProjectReference Include="..\Sdk\Sdk.csproj" />
     </ItemGroup>
-    <ItemGroup>
-        <Folder Include="Structs\" />
-    </ItemGroup>
 </Project>

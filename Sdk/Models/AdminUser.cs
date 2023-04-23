@@ -8,6 +8,7 @@ public abstract class AdminUser
     public uint Id { get; }
     public string Name { get; } = "TempAdmin::" + Guid.NewGuid();
     public ulong SteamId { get; }
+    public AdminFlags Flags => _accessFlags;
 
     private AdminFlags _accessFlags = AdminFlags.None;
 

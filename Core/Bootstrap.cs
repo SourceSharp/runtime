@@ -63,6 +63,7 @@ internal static class Bootstrap
         var pluginManager = services.GetRequiredService<IPluginManager>();
 
         pluginManager.Initialize();
+        Invoker.Initialize(services);
 
         Task.Run(async () => await SignalThread(services));
     }
