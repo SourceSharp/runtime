@@ -1,8 +1,8 @@
-
 using SourceSharp.Core.Interfaces;
-using System;
-using System.Runtime.InteropServices;
 using SourceSharp.Sdk.Models;
+using System;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace SourceSharp.Core;
 

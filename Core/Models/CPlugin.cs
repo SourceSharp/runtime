@@ -20,11 +20,11 @@ internal class CPlugin
     public Action<bool>? FrameHook { get; }
 
     // copyright
-    public string Name { get; set; }
-    public string Author { get; set; }
-    public string Version { get; set; }
-    public string Url { get; set; } = "https://github.com/SourceSharp";
-    public string Description { get; set; } = string.Empty;
+    public string Name { get; }
+    public string Author { get; }
+    public string Version { get; }
+    public string Url { get; } = "https://github.com/SourceSharp";
+    public string Description { get; } = string.Empty;
 
     public CPlugin(string path, PluginLoader loader, IPlugin instance,
         Action<bool>? frameHook,

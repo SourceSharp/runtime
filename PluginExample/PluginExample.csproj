@@ -33,6 +33,6 @@
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Sdk\Sdk.csproj"/>
+        <ProjectReference Include="..\Sdk\Sdk.csproj" />
     </ItemGroup>
 </Project>
