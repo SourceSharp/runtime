@@ -90,11 +90,7 @@ internal class PluginManager : IPluginManager
             }
             catch (Exception e)
             {
-                if (loader is not null)
-                {
-                    loader.Dispose();
-                }
-
+                loader?.Dispose();
                 _sourceSharp.LogMessage($"Failed to load plugin <{name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
             }
         }
@@ -183,6 +179,6 @@ internal class PluginManager : IPluginManager
 
     private void InspectPlugin(SourceSharpPlugin plugin)
     {
-
+        throw new NotImplementedException();
     }
 }

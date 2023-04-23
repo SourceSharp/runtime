@@ -34,7 +34,7 @@ public class Example : PluginBase, IExportInterface
     private void TestServerCommand(ConsoleCommand command)
         => _sourceSharp.LogMessage("test command executed: " + command.ArgString);
 
-    [ClientConsoleCommand("ss_c_test", "测试命令", ConVarFlags.Release | ConVarFlags.ServerCanExecute)]
+    [ClientConsoleCommand("ss_c_test", "测试命令", ConVarFlags.Release | ConVarFlags.ServerCanExecute, AdminFlags.ChangeMap)]
     private void TestClientCommand(ConsoleCommand command)
         => _sourceSharp.LogMessage("test command executed: " + command.ArgString);
 

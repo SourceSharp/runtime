@@ -3,7 +3,7 @@ using System;
 
 namespace SourceSharp.Sdk.Attributes;
 
-public class ConsoleCommandBase : Attribute
+public abstract class ConsoleCommandBase : Attribute
 {
     public string Command { get; }
     public string Description { get; }
@@ -44,9 +44,25 @@ public sealed class ServerConsoleCommand : ConsoleCommandBase
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]
 public sealed class ClientConsoleCommand : ConsoleCommandBase
 {
-    public ClientConsoleCommand(string command) : base(command) { }
+    public AdminFlags AccessFlags { get; }
 
-    public ClientConsoleCommand(string command, string description) : base(command, description) { }
+    public ClientConsoleCommand(string command) : base(command)
+    {
+        AccessFlags = AdminFlags.None;
+    }
 
-    public ClientConsoleCommand(string command, string description, ConVarFlags flags) : base(command, description, flags) { }
+    public ClientConsoleCommand(string command, string description) : base(command, description)
+    {
+        AccessFlags = AdminFlags.None;
+    }
+
+    public ClientConsoleCommand(string command, string description, ConVarFlags flags) : base(command, description, flags)
+    {
+        AccessFlags = AdminFlags.None;
+    }
+
+    public ClientConsoleCommand(string command, string description, ConVarFlags flags, AdminFlags admin) : base(command, description, flags)
+    {
+        AccessFlags = admin;
+    }
 }

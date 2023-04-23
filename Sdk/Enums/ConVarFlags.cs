@@ -78,7 +78,7 @@ public enum ConVarFlags : uint
     /// We are changing the default behavior of concommands to disallow execution by remote clients without
     /// this flag due to the number existing concommands that can lag or crash the server when clients abuse them.
     /// </summary>
-    GameDllForRemoteClients = (1 << 10),
+    GameDllForRemoteClients = PrintableOnly,
 
     /// <summary>
     /// If this is a FCVAR_SERVER, don't log changes to the log file / console if we are creating a log
@@ -117,7 +117,7 @@ public enum ConVarFlags : uint
     /// <summary>
     /// don't record these command in demofiles
     /// </summary>
-    DontRecord = (1 << 17),
+    DoNotRecord = (1 << 17),
 
     /// <summary>
     /// This is one of the "added" FCVAR_SS variables for the splitscreen players
