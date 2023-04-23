@@ -9,4 +9,7 @@ public static class SharedDefines
 
     public const string CommandListenerInterfaceName = "ISOURCESHARP_COMMANDLISTENER";
     public const uint CommandListenerInterfaceVersion = 1;
+
+    public const string PlayerListenerInterfaceName = "ISOURCESHARP_PLAYERLISTENER";
+    public const uint PlayerListenerInterfaceVersion = 1;
 }

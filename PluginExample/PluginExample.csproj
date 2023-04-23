@@ -13,7 +13,8 @@
         <PackageProjectUrl>https://github.com/SourceSharp</PackageProjectUrl>
         <Copyright>©2023 Kyle, Bone</Copyright>
         <RepositoryUrl>https://github.com/SourceSharp/runtime</RepositoryUrl>
-        <Platforms>AnyCPU;x64;x86</Platforms>
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+        <Platforms>x64;x86</Platforms>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>

@@ -3,7 +3,7 @@ using System;
 
 namespace SourceSharp.Sdk.Models;
 
-public sealed class AdminUser
+public abstract class AdminUser
 {
     public uint Id { get; }
     public string Name { get; } = "TempAdmin::" + Guid.NewGuid();

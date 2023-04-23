@@ -47,9 +47,14 @@ internal static class Bootstrap
                               throw new InvalidDataException("Core config is missing!"));
 
         services.AddSingleton<ISourceSharpBase, SourceSharp>();
-        services.AddScoped<IShareSystemBase, ShareSystem>();
+        services.AddSingleton<IShareSystemBase, ShareSystem>();
 
         services.AddSingleton<IGameEventListener, GameEventListener>();
+        services.AddSingleton<ICommandListener, CommandListener>();
+        services.AddSingleton<IPlayerListener, PlayerListener>();
+        //services.AddSingleton<IPlayerManagerBase>();
+        //services.AddSingleton<IAdminManagerBase>()
+
         services.AddSingleton<IPluginManager, PluginManager>();
     }
 

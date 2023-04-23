@@ -2,6 +2,7 @@
 using SourceSharp.Core.Configurations;
 using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
+using SourceSharp.Core.Utils;
 using SourceSharp.Sdk.Attributes;
 using SourceSharp.Sdk.Enums;
 using SourceSharp.Sdk.Interfaces;
@@ -18,7 +19,10 @@ internal class PluginManager : IPluginManager
     private readonly ISourceSharpBase _sourceSharp;
     private readonly IShareSystemBase _shareSystem;
 
-    private readonly List<SourceSharpPlugin> _plugins;
+    private readonly List<CPlugin> _plugins;
+
+    // TODO MaxPlayers correct value
+    private readonly uint _maxPlayers;
 
     public PluginManager(CoreConfig config, ISourceSharpBase sourceSharp, IShareSystemBase shareSystem)
     {
@@ -27,6 +31,8 @@ internal class PluginManager : IPluginManager
         _shareSystem = shareSystem;
 
         _plugins = new();
+
+        _maxPlayers = 64;
     }
 
     public void Initialize()
@@ -65,33 +71,32 @@ internal class PluginManager : IPluginManager
                 var shareSystem = tPlugin.GetProperties().Single(x => x.Name == "_shareSystem");
                 shareSystem.SetValue(instance, _shareSystem);
 
-                // TODO MaxPlayers correct value
                 var mp = tPlugin.GetProperties().Single(x => x.Name == "MaxPlayers");
-                mp.SetValue(instance, 64);
+                mp.SetValue(instance, _maxPlayers);
 
                 var pa = Attribute.GetCustomAttribute(tPlugin, typeof(PluginAttribute)) as PluginAttribute ??
                          throw new BadImageFormatException("Plugin metadata not found");
 
-                _plugins.Add(new()
+                var fhc = tPlugin.GetMethods()
+                    .Where(m => Attribute.GetCustomAttributes(m, typeof(GameFrameAttribute)).Any())
+                    .ToList();
+
+                if (fhc.Count > 1)
                 {
-                    Path = file,
-                    Instance = instance,
-                    Status = PluginStatus.Checked,
-                    Loader = loader,
+                    throw new BadImageFormatException("Multiple GameFrameHook found.");
+                }
 
-                    Name = pa.Name,
-                    Author = pa.Author,
-                    Version = pa.Version,
-                    Url = pa.Url,
-                    Description = pa.Description
-                });
+                var fh = fhc.Single();
+                fh.CheckReturnAndParameters(typeof(void), new[] { typeof(bool) });
+                var gh = (Action<bool>)Delegate.CreateDelegate(typeof(Action<bool>), fhc.Single());
 
+                _plugins.Add(new(file, loader, instance, gh, pa));
                 _sourceSharp.PrintLine($"Plugin <{name}> checked.");
             }
             catch (Exception e)
             {
                 loader?.Dispose();
-                _sourceSharp.LogMessage($"Failed to load plugin <{name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
+                _sourceSharp.LogError($"Failed to load plugin <{name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
             }
         }
 
@@ -131,15 +136,23 @@ internal class PluginManager : IPluginManager
         _plugins.Clear();
     }
 
+    public void OnGameFrame(bool simulating)
+    {
+        foreach (var plugin in _plugins.Where(x => x.Status is PluginStatus.Running && x.FrameHook is not null))
+        {
+            plugin.FrameHook?.Invoke(simulating);
+        }
+    }
+
     private void LoadPlugins()
     {
-        foreach (var plugin in _plugins)
+        foreach (var plugin in _plugins.Where(x => x.Status is PluginStatus.Checked))
         {
             LoadPlugin(plugin);
         }
     }
 
-    private void LoadPlugin(SourceSharpPlugin plugin)
+    private void LoadPlugin(CPlugin plugin)
     {
         try
         {
@@ -162,11 +175,21 @@ internal class PluginManager : IPluginManager
         }
     }
 
-    private void UnloadPlugin(SourceSharpPlugin plugin)
+    private void UnloadPlugin(CPlugin plugin)
     {
         try
         {
-            _shareSystem.CheckUnloadPluginInterfaces(plugin.Instance);
+            var interfaces = _shareSystem.CheckUnloadPluginInterfaces(plugin.Instance);
+            if (interfaces.Any())
+            {
+                foreach (var @interface in interfaces)
+                {
+                    foreach (var p in _plugins.Where(x => !x.Equals(plugin)))
+                    {
+                        p.Instance.NotifyInterfaceDrop(@interface);
+                    }
+                }
+            }
             plugin.Instance.OnShutdown();
             plugin.Loader.Dispose();
             plugin.Status = PluginStatus.None;
@@ -177,7 +200,7 @@ internal class PluginManager : IPluginManager
         }
     }
 
-    private void InspectPlugin(SourceSharpPlugin plugin)
+    private void InspectPlugin(CPlugin plugin)
     {
         throw new NotImplementedException();
     }

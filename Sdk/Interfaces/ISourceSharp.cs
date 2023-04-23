@@ -57,5 +57,17 @@ public interface ISourceSharp : IRuntime
     /// <param name="action">action method</param>
     void InvokeNextFrame(Action action);
 
+    /// <summary>
+    /// 当前地图的运行时间
+    /// </summary>
+    /// <param name="readPtr">使用指针读取</param>
+    /// <returns>gpGlobals->curtime 或 缓存的值</returns>
+    int GetGameTime(bool readFromPtr = false);
 
+    /// <summary>
+    /// 当前地图运行的帧数
+    /// </summary>
+    /// <param name="readFromPtr">使用指针读取</param>
+    /// <returns>gpGlobals->tickcount 或 缓存的值</returns>
+    int GetGameTickCount(bool readFromPtr = false);
 }

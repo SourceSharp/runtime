@@ -42,6 +42,14 @@ public class Example : PluginBase, IExportInterface
     private void OnPlayerSpawn(GameEvent @event)
         => _sourceSharp.LogMessage("player spawned -> userId: " + @event.Get<int>("userid"));
 
+    [GameFrame]
+    private void OnGameFrame(bool simulating)
+        => _sourceSharp.LogMessage($"OnGameFrame({simulating})");
+
+    [PlayerListener(PlayerListenerType.Connected)]
+    private void OnPlayerConnected(GamePlayer player)
+        => _sourceSharp.LogMessage("player connected -> name: " + player.Name);
+
     /*
      * Export
      */
