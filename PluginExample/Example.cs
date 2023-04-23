@@ -1,4 +1,5 @@
 ﻿using SourceSharp.Sdk.Attributes;
+using SourceSharp.Sdk.Enums;
 using SourceSharp.Sdk.Interfaces;
 using SourceSharp.Sdk.Models;
 using System.Reflection;
@@ -29,9 +30,17 @@ public class Example : PluginBase, IExportInterface
     public override void OnShutdown()
         => _sourceSharp.LogMessage("plugin unloaded");
 
-    [ServerConsoleCommand(Command = "ss_test")]
-    private void TestCommand(ConsoleCommand command)
+    [ServerConsoleCommand("ss_s_test", "测试命令")]
+    private void TestServerCommand(ConsoleCommand command)
         => _sourceSharp.LogMessage("test command executed: " + command.ArgString);
+
+    [ClientConsoleCommand("ss_c_test", "测试命令", ConVarFlags.Release | ConVarFlags.ServerCanExecute)]
+    private void TestClientCommand(ConsoleCommand command)
+        => _sourceSharp.LogMessage("test command executed: " + command.ArgString);
+
+    [GameEvent("player_spawn")]
+    private void OnPlayerSpawn(GameEvent @event)
+        => _sourceSharp.LogMessage("player spawned -> userId: " + @event.Get<int>("userid"));
 
     /*
      * Export
