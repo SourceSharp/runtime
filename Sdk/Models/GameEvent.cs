@@ -1,25 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SourceSharp.Core.Models;
+namespace SourceSharp.Sdk.Models;
 
-public interface IGameEvent
-{
-    T Get<T>(string key);
-}
-
-internal class GameEvent
+public class GameEvent
 {
     private readonly Dictionary<string, object> _dictionary = new();
 
     public object this[string index]
     {
         get => _dictionary[index];
-        set
-        {
-            _dictionary[index] = value;
-            throw new NotImplementedException();
-        }
+        set => throw new NotImplementedException();
     }
 
     public T Get<T>(string key)

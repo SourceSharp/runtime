@@ -13,13 +13,25 @@
         <PackageProjectUrl>https://github.com/SourceSharp</PackageProjectUrl>
         <Copyright>©2023 Kyle, Bone</Copyright>
         <RepositoryUrl>https://github.com/SourceSharp/runtime</RepositoryUrl>
-        <EnableDynamicLoading>true</EnableDynamicLoading>
+        <Platforms>AnyCPU;x64;x86</Platforms>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+      <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+      <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\Sdk\Sdk.csproj" />

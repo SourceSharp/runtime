@@ -6,18 +6,31 @@
         <Nullable>enable</Nullable>
         <AssemblyName>SourceSharp.Sdk</AssemblyName>
         <RootNamespace>SourceSharp.Sdk</RootNamespace>
-        <PlatformTarget>x64</PlatformTarget>
         <VersionPrefix>1.0</VersionPrefix>
         <VersionSuffix>1</VersionSuffix>
         <Version>$(VersionPrefix).$(VersionSuffix)</Version>
         <PackageProjectUrl>https://github.com/SourceSharp</PackageProjectUrl>
         <Copyright>©2023 Kyle, Bone</Copyright>
         <RepositoryUrl>https://github.com/SourceSharp/runtime</RepositoryUrl>
+        <Platforms>x64;x86</Platforms>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <PlatformTarget>x86</PlatformTarget>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <PlatformTarget>x86</PlatformTarget>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+    <ItemGroup>
+      <Folder Include="Structs\" />
+    </ItemGroup>
 </Project>

@@ -15,16 +15,16 @@ namespace SourceSharp.Core;
 internal class PluginManager : IPluginManager
 {
     private readonly CoreConfig _config;
-    private readonly ICore _core;
-    private readonly IGameEventListener _gameEventListener;
+    private readonly ISourceSharpBase _sourceSharp;
+    private readonly IShareSystemBase _shareSystem;
 
     private readonly List<SourceSharpPlugin> _plugins;
 
-    public PluginManager(CoreConfig config, ICore core, IGameEventListener gameEventListener)
+    public PluginManager(CoreConfig config, ISourceSharpBase sourceSharp, IShareSystemBase shareSystem)
     {
         _config = config;
-        _core = core;
-        _gameEventListener = gameEventListener;
+        _sourceSharp = sourceSharp;
+        _shareSystem = shareSystem;
 
         _plugins = new();
     }
@@ -51,16 +51,26 @@ internal class PluginManager : IPluginManager
                 });
 
                 var tPlugin = loader.LoadDefaultAssembly().GetTypes()
-                                  .SingleOrDefault(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract) ??
+                                  .SingleOrDefault(t => typeof(PluginBase).IsAssignableFrom(t) && !t.IsAbstract) ??
                               throw new FileLoadException("IPlugin is not implemented.");
 
-                if (Activator.CreateInstance(tPlugin, _core) is not IPlugin instance)
+                if (Activator.CreateInstance(tPlugin) is not PluginBase instance)
                 {
                     throw new InvalidOperationException("Failed to create instance.");
                 }
 
+                var sourceSharp = tPlugin.GetProperties().Single(x => x.Name == "_sourceSharp");
+                sourceSharp.SetValue(instance, _sourceSharp);
+
+                var shareSystem = tPlugin.GetProperties().Single(x => x.Name == "_shareSystem");
+                shareSystem.SetValue(instance, _shareSystem);
+
+                // TODO MaxPlayers correct value
+                var mp = tPlugin.GetProperties().Single(x => x.Name == "MaxPlayers");
+                mp.SetValue(instance, 64);
+
                 var pa = Attribute.GetCustomAttribute(tPlugin, typeof(PluginAttribute)) as PluginAttribute ??
-                         throw new InvalidDataException("Plugin metadata not found");
+                         throw new BadImageFormatException("Plugin metadata not found");
 
                 _plugins.Add(new()
                 {
@@ -76,16 +86,12 @@ internal class PluginManager : IPluginManager
                     Description = pa.Description
                 });
 
-                _core.PrintLine($"Plugin <{name}> checked.");
+                _sourceSharp.PrintLine($"Plugin <{name}> checked.");
             }
             catch (Exception e)
             {
-                if (loader is not null)
-                {
-                    loader.Dispose();
-                }
-
-                _core.LogMessage($"Failed to load plugin <{name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
+                loader?.Dispose();
+                _sourceSharp.LogMessage($"Failed to load plugin <{name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
             }
         }
 
@@ -109,7 +115,7 @@ internal class PluginManager : IPluginManager
 
                 if (e is not InvalidOperationException)
                 {
-                    _core.LogMessage($"Failed to load plugin <{plugin.Name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
+                    _sourceSharp.LogMessage($"Failed to load plugin <{plugin.Name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
                 }
             }
         }
@@ -117,20 +123,9 @@ internal class PluginManager : IPluginManager
 
     public void Shutdown()
     {
-        _gameEventListener.Shutdown();
-
         foreach (var plugin in _plugins)
         {
-            try
-            {
-                plugin.Instance.OnShutdown();
-                plugin.Loader.Dispose();
-                plugin.Status = PluginStatus.None;
-            }
-            catch (Exception e)
-            {
-                _core.LogError($"Error during shutting down on <{plugin.Name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
-            }
+            UnloadPlugin(plugin);
         }
 
         _plugins.Clear();
@@ -140,33 +135,50 @@ internal class PluginManager : IPluginManager
     {
         foreach (var plugin in _plugins)
         {
-            try
-            {
-                if (!plugin.Instance.OnLoad())
-                {
-                    throw new InvalidOperationException();
-                }
+            LoadPlugin(plugin);
+        }
+    }
 
-                plugin.Status = PluginStatus.Running;
-                _core.PrintLine($"Plugin <{plugin.Name}> loaded.");
+    private void LoadPlugin(SourceSharpPlugin plugin)
+    {
+        try
+        {
+            if (!plugin.Instance.OnLoad())
+            {
+                throw new InvalidOperationException();
             }
-            catch (Exception e)
+
+            plugin.Status = PluginStatus.Running;
+            _sourceSharp.PrintLine($"Plugin <{plugin.Name}> loaded.");
+        }
+        catch (Exception e)
+        {
+            plugin.Status = PluginStatus.Failed;
+
+            if (e is not InvalidOperationException)
             {
-                plugin.Status = PluginStatus.Failed;
-
-                if (e is not InvalidOperationException)
-                {
-                    _core.LogMessage($"Failed to load plugin <{plugin.Name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
-
-                }
+                _sourceSharp.LogMessage($"Failed to load plugin <{plugin.Name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
             }
         }
+    }
 
-        _gameEventListener.Initialize(_plugins);
+    private void UnloadPlugin(SourceSharpPlugin plugin)
+    {
+        try
+        {
+            _shareSystem.CheckUnloadPluginInterfaces(plugin.Instance);
+            plugin.Instance.OnShutdown();
+            plugin.Loader.Dispose();
+            plugin.Status = PluginStatus.None;
+        }
+        catch (Exception e)
+        {
+            _sourceSharp.LogError($"Error during shutting down on <{plugin.Name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
+        }
     }
 
     private void InspectPlugin(SourceSharpPlugin plugin)
     {
-
+        throw new NotImplementedException();
     }
 }

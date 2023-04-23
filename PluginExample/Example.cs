@@ -1,68 +1,51 @@
 ﻿using SourceSharp.Sdk.Attributes;
+using SourceSharp.Sdk.Enums;
 using SourceSharp.Sdk.Interfaces;
 using SourceSharp.Sdk.Models;
-using System.Net.Http;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace SourceSharp.Example;
 
-[Plugin(Name = "Example", Author = "SourceSharp Team", Version = "1.0")]
-public class Example : IPlugin
+public interface IExportInterface : IRuntime
 {
-    private readonly ICore _core;
+    void TestExport();
+}
 
-    public Example(ICore core) => _core = core;
-
-    public bool OnLoad()
+[Plugin(Name = "Example", Author = "SourceSharp Team", Version = "1.0")]
+public class Example : PluginBase, IExportInterface
+{
+    public override bool OnLoad()
     {
-        _core.LogMessage("plugin loaded");
+        _sourceSharp.LogMessage("plugin loaded");
+        _shareSystem.AddInterface(this, this);
         return true;
     }
 
-    public bool QueryRunning() => true;
-
-    public void OnShutdown()
+    public override void OnAllLoad()
     {
-        _core.LogMessage("plugin unloaded");
+        var export = _shareSystem.GetRequiredInterface<IExportInterface>(1);
+        export.TestExport();
     }
 
-    [ServerConsoleCommand(Command = "ss_test")]
-    private void TestCommand(ConsoleCommand command)
-    {
-        _core.LogMessage("test command executed: " + command.ArgString);
-    }
+    public override void OnShutdown()
+        => _sourceSharp.LogMessage("plugin unloaded");
 
-    class GamePlayer
-    {
+    [ServerConsoleCommand("ss_s_test", "测试命令")]
+    private void TestServerCommand(ConsoleCommand command)
+        => _sourceSharp.LogMessage("test command executed: " + command.ArgString);
 
-    }
-    class WarcraftPlayer
-    {
-        public int Exp;
-    }
+    [ClientConsoleCommand("ss_c_test", "测试命令", ConVarFlags.Release | ConVarFlags.ServerCanExecute, AdminFlags.ChangeMap)]
+    private void TestClientCommand(ConsoleCommand command)
+        => _sourceSharp.LogMessage("test command executed: " + command.ArgString);
 
-    private void OnClientConnected(GamePlayer player)
-    {
-        var w3p = new WarcraftPlayer();
+    [GameEvent("player_spawn")]
+    private void OnPlayerSpawn(GameEvent @event)
+        => _sourceSharp.LogMessage("player spawned -> userId: " + @event.Get<int>("userid"));
 
-        Task.Run(async () =>
-        {
-            var http = new HttpClient();
-
-            await Task.CompletedTask;
-            var response = new { Exp = 100 };
-
-            // or?
-            lock (w3p)
-            {
-                w3p.Exp = response.Exp;
-            }
-
-            // or?
-            _core.Invoke(() =>
-            {
-                w3p.Exp = response.Exp;
-            });
-        });
-    }
+    /*
+     * Export
+     */
+    public void TestExport() => _sourceSharp.LogMessage("Test Export");
+    public string GetInterfaceName() => "ISOURCESHARP_" + Assembly.GetExecutingAssembly()!.GetName().Name!.ToUpper();
+    public uint GetInterfaceVersion() => (uint)Assembly.GetExecutingAssembly()!.GetName()!.Version!.Major;
 }

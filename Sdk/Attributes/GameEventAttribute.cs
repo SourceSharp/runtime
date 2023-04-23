@@ -1,12 +1,23 @@
-﻿using System;
+﻿using SourceSharp.Sdk.Enums;
+using System;
 
 namespace SourceSharp.Sdk.Attributes;
 
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-public class GameEventAttribute : Attribute
+public sealed class GameEventAttribute : Attribute
 {
-    public required string Name { get; set; }
+    public string Name { get; }
+    public GameEventHookType Type { get; }
 
     public GameEventAttribute(string name)
-        => Name = name.ToLower();
+    {
+        Name = name.ToLower();
+        Type = GameEventHookType.Post;
+    }
+
+    public GameEventAttribute(string name, GameEventHookType type)
+    {
+        Name = name.ToLower();
+        Type = type;
+    }
 }
