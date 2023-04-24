@@ -34,9 +34,9 @@ public interface IPlugin
 public abstract class PluginBase : IPlugin
 {
 #nullable disable
-    protected ISourceSharp _sourceSharp { get; }
-    protected IShareSystem _shareSystem { get; }
-    protected IRuntime _myself { get; }
+    protected readonly ISourceSharp _sourceSharp;
+    protected readonly IShareSystem _shareSystem;
+    protected readonly IRuntime _myself;
 
     public static uint MaxPlayers { get; }
 #nullable restore

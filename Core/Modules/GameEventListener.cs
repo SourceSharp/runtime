@@ -60,7 +60,7 @@ internal class GameEventListener : IGameEventListener
             _listener[ev.Name].Add(new()
             {
                 Plugin = plugin,
-                Callback = (Action<GameEvent>)Delegate.CreateDelegate(typeof(Action<GameEvent>), hook)
+                Callback = hook.CreateDelegate<Action<GameEvent>>()
             });
         }
     }

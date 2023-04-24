@@ -70,7 +70,7 @@ internal class PlayerListener : IPlayerListener
                 _hooks.Add(new()
                 {
                     Plugin = plugin,
-                    Callback = (Func<ulong, IPEndPoint, string, string, ActionResponse<string>>)Delegate.CreateDelegate(typeof(Func<ulong, IPEndPoint, string, string, ActionResponse<string>>), hook),
+                    Callback = hook.CreateDelegate<Func<ulong, IPEndPoint, string, string, ActionResponse<string>>>(),
                 });
             }
             else
@@ -80,7 +80,7 @@ internal class PlayerListener : IPlayerListener
                 _events.Add(new()
                 {
                     Plugin = plugin,
-                    Callback = (Action<GamePlayer>)Delegate.CreateDelegate(typeof(Action<GamePlayer>), hook)
+                    Callback = hook.CreateDelegate<Action<GamePlayer>>()
                 });
             }
         }

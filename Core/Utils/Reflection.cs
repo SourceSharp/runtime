@@ -27,4 +27,20 @@ internal static class Reflection
             }
         }
     }
+
+    public static void SetStaticProtectedPropertyNoSetter(this Type type, string name, object instance, object value)
+    {
+        var field = type.GetField($"<{name}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static)
+            ?? throw new MissingMemberException("Property not found.", name);
+
+        field.SetValue(instance, value);
+    }
+
+    public static void SetProtectedReadOnlyField(this Type type, string name, object instance, object value)
+    {
+        var field = type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?? throw new MissingFieldException("Field not found.", name);
+
+        field.SetValue(instance, value);
+    }
 }

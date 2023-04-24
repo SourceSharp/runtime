@@ -102,7 +102,7 @@ internal class CommandListener : ICommandListener
 
                 _server[sc.Command]
                     .Add(new(new ConsoleCommandInfo(sc.Command, sc.Description, sc.Flags, AdminFlags.None), plugin,
-                        (Action<ConsoleCommand>)Delegate.CreateDelegate(typeof(Action<ConsoleCommand>), hook)));
+                        (hook.CreateDelegate<Action<ConsoleCommand>>())));
             }
             else if (attr is ClientConsoleCommand cc)
             {
@@ -117,8 +117,7 @@ internal class CommandListener : ICommandListener
 
                 _client[cc.Command]
                     .Add(new(new ConsoleCommandInfo(cc.Command, cc.Description, cc.Flags, cc.AccessFlags), plugin,
-                        (Action<ConsoleCommand, GamePlayer?>)Delegate.CreateDelegate(
-                            typeof(Action<ConsoleCommand, GamePlayer?>), hook)));
+                        hook.CreateDelegate<Action<ConsoleCommand, GamePlayer?>>()));
             }
         }
     }
