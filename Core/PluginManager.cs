@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace SourceSharp.Core;
 
@@ -40,16 +41,19 @@ internal class PluginManager : IPluginManager
         foreach (var path in Directory.GetDirectories(Path.Combine("plugins"), "*", SearchOption.TopDirectoryOnly))
         {
             PluginLoader? loader = null;
-            var name = Path.GetDirectoryName(path)!;
+            var name = Path.GetFileName(path)!;
             try
             {
                 var file = Path.Combine(path, $"{name}.dll");
+
                 if (!File.Exists(file))
                 {
                     throw new DllNotFoundException($"Plugin dll not found.");
                 }
 
-                loader = PluginLoader.CreateFromAssemblyFile(file, config =>
+                var absolutePath = Path.GetFullPath(file);
+
+                loader = PluginLoader.CreateFromAssemblyFile(absolutePath, config =>
                 {
                     config.PreferSharedTypes = true;
                     config.IsUnloadable = true;
@@ -65,15 +69,19 @@ internal class PluginManager : IPluginManager
                     throw new InvalidOperationException("Failed to create instance.");
                 }
 
-                var sourceSharp = tPlugin.GetProperties().Single(x => x.Name == "_sourceSharp");
-                sourceSharp.SetValue(instance, _sourceSharp);
+                var sourceSharp = tPlugin.GetField("<_sourceSharp>k__BackingField",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+                sourceSharp?.SetValue(instance, _sourceSharp);
 
-                var shareSystem = tPlugin.GetProperties().Single(x => x.Name == "_shareSystem");
-                shareSystem.SetValue(instance, _shareSystem);
+                var shareSystem = tPlugin.GetField("<_shareSystem>k__BackingField",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+                shareSystem?.SetValue(instance, _shareSystem);
 
-                var mp = tPlugin.GetProperties().Single(x => x.Name == "MaxPlayers");
-                mp.SetValue(instance, _maxPlayers);
+                var mp = tPlugin.GetField("<MaxPlayers>k__BackingField",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+                mp?.SetValue(instance, _maxPlayers);
 
+                Console.WriteLine("==========> 1");
                 var pa = Attribute.GetCustomAttribute(tPlugin, typeof(PluginAttribute)) as PluginAttribute ??
                          throw new BadImageFormatException("Plugin metadata not found");
 
@@ -86,9 +94,13 @@ internal class PluginManager : IPluginManager
                     throw new BadImageFormatException("Multiple GameFrameHook found.");
                 }
 
-                var fh = fhc.Single();
-                fh.CheckReturnAndParameters(typeof(void), new[] { typeof(bool) });
-                var gh = (Action<bool>)Delegate.CreateDelegate(typeof(Action<bool>), fhc.Single());
+                Action<bool>? gh = null;
+                if (fhc.Count == 1)
+                {
+                    var fh = fhc.Single();
+                    fh.CheckReturnAndParameters(typeof(void), new[] {typeof(bool)});
+                    gh = (Action<bool>) Delegate.CreateDelegate(typeof(Action<bool>), fhc.Single());
+                }
 
                 _plugins.Add(new(file, loader, instance, gh, pa));
                 _sourceSharp.PrintLine($"Plugin <{name}> checked.");
@@ -190,6 +202,7 @@ internal class PluginManager : IPluginManager
                     }
                 }
             }
+
             plugin.Instance.OnShutdown();
             plugin.Loader.Dispose();
             plugin.Status = PluginStatus.None;
