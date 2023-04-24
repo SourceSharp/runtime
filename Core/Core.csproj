@@ -14,6 +14,7 @@
         <RepositoryUrl>https://github.com/SourceSharp/runtime</RepositoryUrl>
         <DnneNativeBinaryName>SourceSharp.Runtime</DnneNativeBinaryName>
         <EnableDynamicLoading>true</EnableDynamicLoading>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
@@ -44,6 +45,7 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="CppSharp.Runtime" Version="1.0.45.22293" />
         <PackageReference Include="DNNE" Version="2.0.1" />
         <PackageReference Include="McMaster.NETCore.Plugins" Version="1.4.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
