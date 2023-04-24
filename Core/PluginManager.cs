@@ -5,6 +5,7 @@ using SourceSharp.Core.Models;
 using SourceSharp.Core.Utils;
 using SourceSharp.Sdk.Attributes;
 using SourceSharp.Sdk.Enums;
+using SourceSharp.Sdk.Shared;
 using SourceSharp.Sdk.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -44,11 +45,11 @@ internal class PluginManager : IPluginManager
             var name = Path.GetFileName(path)!;
             try
             {
-                var file = Path.Combine(path, $"{name}.dll");
+                var file = Path.Combine(path, $"{name}.{Platform.GetPluginSuffix()}");
 
                 if (!File.Exists(file))
                 {
-                    throw new DllNotFoundException($"Plugin dll not found.");
+                    throw new DllNotFoundException($"Plugin {file} not found.");
                 }
 
                 var absolutePath = Path.GetFullPath(file);
