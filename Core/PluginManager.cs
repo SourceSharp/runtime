@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace SourceSharp.Core;
 
-internal class PluginManager : IPluginManager
+internal sealed class PluginManager : IPluginManager
 {
     private readonly CoreConfig _config;
     private readonly ISourceSharpBase _sourceSharp;

@@ -10,21 +10,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 
 namespace SourceSharp.Core.Modules;
 
-internal class PlayerListener : IPlayerListener
+internal sealed class PlayerListener : IPlayerListener
 {
-    private class PlayerEvent
+    private class PlayerEvent : CHookCallback<Action<GamePlayer>>
     {
-        public required CPlugin Plugin { get; set; }
-        public required Action<GamePlayer> Callback { get; set; }
+        internal PlayerEvent(CPlugin plugin, MethodInfo method) : base(plugin, method) { }
     }
 
-    private class PlayerHook
+    private class PlayerHook : CHookCallback<Func<ulong, IPEndPoint, string, string, ActionResponse<string>>>
     {
-        public required CPlugin Plugin { get; set; }
-        public required Func<ulong, IPEndPoint, string, string, ActionResponse<string>> Callback { get; set; }
+        internal PlayerHook(CPlugin plugin, MethodInfo method) : base(plugin, method) { }
     }
 
     private readonly List<PlayerEvent> _events;
@@ -64,24 +63,13 @@ internal class PlayerListener : IPlayerListener
 
             if (ev.Type is PlayerListenerType.ConnectHook)
             {
-                hook.CheckReturnAndParameters(typeof(bool),
-                    new[] { typeof(ulong), typeof(string), typeof(string), typeof(string), typeof(string) });
-
-                _hooks.Add(new()
-                {
-                    Plugin = plugin,
-                    Callback = hook.CreateDelegate<Func<ulong, IPEndPoint, string, string, ActionResponse<string>>>(),
-                });
+                hook.CheckReturnAndParameters(typeof(bool), new[] { typeof(ulong), typeof(string), typeof(string), typeof(string), typeof(string) });
+                _hooks.Add(new(plugin, hook));
             }
             else
             {
                 hook.CheckReturnAndParameters(typeof(void), new[] { typeof(CGamePlayer) });
-
-                _events.Add(new()
-                {
-                    Plugin = plugin,
-                    Callback = hook.CreateDelegate<Action<GamePlayer>>()
-                });
+                _events.Add(new(plugin, hook));
             }
         }
     }

@@ -4,7 +4,7 @@ using System.Net;
 
 namespace SourceSharp.Core.Models;
 
-internal class CGamePlayer : GamePlayer
+internal sealed class CGamePlayer : GamePlayer
 {
     private readonly IPlayerManagerBase _playerManager;
     private readonly IAdminManagerBase _adminManager;

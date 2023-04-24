@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace SourceSharp.Core;
 
-internal class ShareSystem : ShareSystemBase
+internal sealed class ShareSystem : ShareSystemBase
 {
     private class SharedInterface
     {

@@ -9,43 +9,34 @@ using SourceSharp.Sdk.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace SourceSharp.Core.Modules;
 
-internal class CommandListener : ICommandListener
+internal sealed class CommandListener : ICommandListener
 {
-    private abstract class ConsoleCommandEvent
+    private abstract class ConsoleCommandEvent<T> where T : Delegate
     {
         public ConsoleCommandInfo Command { get; }
         public CPlugin Plugin { get; }
+        public T Callback { get; }
 
-        protected ConsoleCommandEvent(ConsoleCommandInfo command, CPlugin plugin)
+        protected ConsoleCommandEvent(ConsoleCommandInfo command, CPlugin plugin, MethodInfo method)
         {
             Command = command;
             Plugin = plugin;
+            Callback = method.CreateDelegate<T>();
         }
     }
 
-    private class ServerConsoleEvent : ConsoleCommandEvent
+    private class ServerConsoleEvent : ConsoleCommandEvent<Action<ConsoleCommand>>
     {
-        public Action<ConsoleCommand> Callback { get; }
-
-        public ServerConsoleEvent(ConsoleCommandInfo command, CPlugin plugin, Action<ConsoleCommand> callback) : base(
-            command, plugin)
-        {
-            Callback = callback;
-        }
+        public ServerConsoleEvent(ConsoleCommandInfo command, CPlugin plugin, MethodInfo method) : base(command, plugin, method) { }
     }
 
-    private sealed class ClientConsoleEvent : ConsoleCommandEvent
+    private sealed class ClientConsoleEvent : ConsoleCommandEvent<Action<ConsoleCommand, GamePlayer?>>
     {
-        public Action<ConsoleCommand, GamePlayer?> Callback { get; }
-
-        public ClientConsoleEvent(ConsoleCommandInfo command, CPlugin plugin, Action<ConsoleCommand, GamePlayer?> callback) : base(
-            command, plugin)
-        {
-            Callback = callback;
-        }
+        public ClientConsoleEvent(ConsoleCommandInfo command, CPlugin plugin, MethodInfo method) : base(command, plugin, method) { }
     }
 
     private readonly Dictionary<string, List<ClientConsoleEvent>> _client;
@@ -100,9 +91,7 @@ internal class CommandListener : ICommandListener
                     // TODO register to Engine
                 }
 
-                _server[sc.Command]
-                    .Add(new(new ConsoleCommandInfo(sc.Command, sc.Description, sc.Flags, AdminFlags.None), plugin,
-                        (hook.CreateDelegate<Action<ConsoleCommand>>())));
+                _server[sc.Command].Add(new(new ConsoleCommandInfo(sc.Command, sc.Description, sc.Flags, AdminFlags.None), plugin, hook));
             }
             else if (attr is ClientConsoleCommand cc)
             {
@@ -115,9 +104,7 @@ internal class CommandListener : ICommandListener
                     // TODO register to Engine
                 }
 
-                _client[cc.Command]
-                    .Add(new(new ConsoleCommandInfo(cc.Command, cc.Description, cc.Flags, cc.AccessFlags), plugin,
-                        hook.CreateDelegate<Action<ConsoleCommand, GamePlayer?>>()));
+                _client[cc.Command].Add(new(new ConsoleCommandInfo(cc.Command, cc.Description, cc.Flags, cc.AccessFlags), plugin, hook));
             }
         }
     }

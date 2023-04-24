@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace SourceSharp.Core.Models;
 
-internal class CPlugin
+internal sealed class CPlugin
 {
     public string Path { get; }
 

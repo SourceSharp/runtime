@@ -7,18 +7,18 @@ using SourceSharp.Sdk.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace SourceSharp.Core.Modules;
 
-internal class GameEventListener : IGameEventListener
+internal sealed class GameEventListener : IGameEventListener
 {
-    private class PluginGameEvent
+    private class GameEventListenerInfo : CHookCallback<Action<GameEvent>>
     {
-        public required CPlugin Plugin { get; set; }
-        public required Action<GameEvent> Callback { get; set; }
+        internal GameEventListenerInfo(CPlugin plugin, MethodInfo method) : base(plugin, method) { }
     }
 
-    private readonly Dictionary<string, List<PluginGameEvent>> _listener;
+    private readonly Dictionary<string, List<GameEventListenerInfo>> _listener;
     private readonly ISourceSharpBase _sourceSharp;
 
     public GameEventListener(ISourceSharpBase sourceSharp)
@@ -57,11 +57,7 @@ internal class GameEventListener : IGameEventListener
                 _listener.Add(ev.Name, new());
             }
 
-            _listener[ev.Name].Add(new()
-            {
-                Plugin = plugin,
-                Callback = hook.CreateDelegate<Action<GameEvent>>()
-            });
+            _listener[ev.Name].Add(new(plugin, hook));
         }
     }
 
