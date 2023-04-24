@@ -20,7 +20,7 @@ internal static class Reflection
 
         for (var i = 0; i < @paramsType.Length; i++)
         {
-            var type = @params[i].GetType();
+            var type = @params[i].ParameterType;
             if (type != @paramsType[i])
             {
                 throw new BadImageFormatException("Bad parameter type: " + type.Name);
@@ -30,8 +30,9 @@ internal static class Reflection
 
     public static void SetStaticProtectedPropertyNoSetter(this Type type, string name, object instance, object value)
     {
-        var field = type.GetField($"<{name}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static)
-            ?? throw new MissingMemberException("Property not found.", name);
+        var field = type.GetField($"<{name}>k__BackingField",
+                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static)
+                    ?? throw new MissingMemberException("Property not found.", name);
 
         field.SetValue(instance, value);
     }
