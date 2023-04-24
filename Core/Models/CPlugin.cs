@@ -15,7 +15,7 @@ internal sealed class CPlugin
 
     public IPlugin Instance { get; }
 
-    public PluginStatus Status { get; set; } = PluginStatus.None;
+    public PluginStatus Status { get; set; }
 
     public Action<bool>? FrameHook { get; }
 
@@ -23,8 +23,8 @@ internal sealed class CPlugin
     public string Name { get; }
     public string Author { get; }
     public string Version { get; }
-    public string Url { get; } = "https://github.com/SourceSharp";
-    public string Description { get; } = string.Empty;
+    public string Url { get; }
+    public string Description { get; }
 
     public CPlugin(string path, PluginLoader loader, IPlugin instance,
         Action<bool>? frameHook,

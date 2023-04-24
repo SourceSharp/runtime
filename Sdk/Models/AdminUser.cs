@@ -5,9 +5,9 @@ namespace SourceSharp.Sdk.Models;
 
 public abstract class AdminUser
 {
-    public uint Id { get; }
-    public string Name { get; } = "TempAdmin::" + Guid.NewGuid();
-    public ulong SteamId { get; }
+    public uint Id { get; protected set; }
+    public string Name { get; protected set; } = "TempAdmin::" + Guid.NewGuid();
+    public ulong SteamId { get; protected set; }
     public AdminFlags Flags => _accessFlags;
 
     private AdminFlags _accessFlags = AdminFlags.None;
@@ -17,7 +17,7 @@ public abstract class AdminUser
     /// </summary>
     /// <param name="flags">新的Flags</param>
     public void SetAdminFlags(AdminFlags flags) => _accessFlags = flags;
-
+     
     /// <summary>
     /// 新增Access Flags
     /// </summary>

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 namespace SourceSharp.Sdk.Interfaces;
 
-// TODO OnRebuildAdminCache  OnAdminChanged
-
 public interface IAdminManager : IRuntime
 {
     /// <summary>

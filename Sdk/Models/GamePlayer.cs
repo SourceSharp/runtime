@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SourceSharp.Sdk.Enums;
+using System;
 using System.Net;
 using System.Text.Json;
 
@@ -16,12 +17,22 @@ public abstract class GamePlayer
     /// <summary>
     /// IP Address
     /// </summary>
-    public IPEndPoint RemoteAddress { get; protected set; } = null!;
+    public IPEndPoint RemoteAddress { get; }
 
     /// <summary>
     /// SteamId - 64
     /// </summary>
-    public ulong SteamId { get; protected set; }
+    public ulong SteamId { get; }
+
+    /// <summary>
+    /// 管理员权限
+    /// </summary>
+    public AdminFlags AdminFlags { get; protected set; }
+
+    /// <summary>
+    /// 是否是管理员
+    /// </summary>
+    public bool IsAdmin => AdminFlags != AdminFlags.None;
 
     /// <summary>
     /// 获取有效的SteamId
@@ -41,17 +52,17 @@ public abstract class GamePlayer
     /// <summary>
     /// UserId of engine
     /// </summary>
-    public int UserId { get; protected set; }
+    public int UserId { get; }
 
     /// <summary>
     /// Serial number
     /// </summary>
-    public uint Serial { get; protected set; }
+    public uint Serial { get; }
 
     /// <summary>
     /// Entity index
     /// </summary>
-    public int Index { get; protected set; }
+    public int Index { get; }
 
     /// <summary>
     /// 玩家是否在游戏中
@@ -66,7 +77,7 @@ public abstract class GamePlayer
     /// <summary>
     /// 是否是SourceTV/GOTV
     /// </summary>
-    public bool IsSourceTV { get; protected set; }
+    public bool IsSourceTv { get; protected set; }
 
     /// <summary>
     /// 是否是Replay
@@ -77,6 +88,11 @@ public abstract class GamePlayer
     /// 是否已完成Steam Validation
     /// </summary>
     public bool IsAuthorized { get; protected set; }
+
+    /// <summary>
+    /// 正在退出游戏!
+    /// </summary>
+    public bool IsDisconnecting { get; protected set; }
 
     /// <summary>
     /// 打印到控制台
@@ -91,14 +107,9 @@ public abstract class GamePlayer
     public abstract void TextMsg(string message);
 
     /// <summary>
-    /// 刷新管理员数据
-    /// </summary>
-    public abstract void RunAdminCacheChecks();
-
-    /// <summary>
     /// 踢出游戏
     /// </summary>
-    public abstract void Kick(GamePlayer player);
+    public abstract void Kick(string message);
 
 
     /*
@@ -124,4 +135,13 @@ public abstract class GamePlayer
         WriteIndented = true,
         IncludeFields = false,
     });
+
+    protected GamePlayer(ulong steamId, IPEndPoint address, int userId, uint serial, int index)
+    {
+        SteamId = steamId;
+        RemoteAddress = address;
+        UserId = userId;
+        Serial = serial;
+        Index = index;
+    }
 }

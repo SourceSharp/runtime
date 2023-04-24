@@ -157,7 +157,7 @@ internal sealed class CommandListener : ICommandListener
 
         var accessFlags = AdminFlags.None;
 
-        AdminUser? admin = null;
+        AdminUser? admin;
         if (player is CGamePlayer { IsAuthorized: true } cp && (admin = _adminManager.FindAdminByIdentity(cp.SteamId)) is not null)
         {
             accessFlags = admin.Flags;

@@ -1,4 +1,4 @@
-﻿using SourceSharp.Core.Interfaces;
+﻿using SourceSharp.Sdk.Enums;
 using SourceSharp.Sdk.Models;
 using System.Net;
 
@@ -6,26 +6,17 @@ namespace SourceSharp.Core.Models;
 
 internal sealed class CGamePlayer : GamePlayer
 {
-    private readonly IPlayerManagerBase _playerManager;
-    private readonly IAdminManagerBase _adminManager;
-
     private bool _inKickQueue;
 
-    public CGamePlayer(IPlayerManagerBase playerManager, IAdminManagerBase adminManager,
-        string name, IPEndPoint address, int userId, ulong steamId, uint serial, int index)
-    {
-        _playerManager = playerManager;
-        _adminManager = adminManager;
+    public bool IsAdminChecked { get; private set; }
 
+    public CGamePlayer(string name, IPEndPoint address, int userId, ulong steamId, uint serial, int index)
+        : base(steamId, address, userId, serial, index)
+    {
         Name = name;
-        RemoteAddress = address;
-        UserId = userId;
-        SteamId = steamId;
-        Serial = serial;
-        Index = index;
     }
 
-    public override void Kick(Sdk.Models.GamePlayer player)
+    public override void Kick(string message)
     {
         if (_inKickQueue)
         {
@@ -52,6 +43,40 @@ internal sealed class CGamePlayer : GamePlayer
         */
     }
 
-    public override void RunAdminCacheChecks()
-        => _adminManager.CheckGameUserAdmin(this);
+    public bool Authorize(ulong steamId)
+    {
+        if (steamId != SteamId)
+        {
+            return false;
+        }
+
+        IsAuthorized = true;
+        return true;
+    }
+
+    public void PutInGame(bool fakeClient, bool sourceTv, bool replay)
+    {
+        IsFakeClient = fakeClient;
+        IsSourceTv = sourceTv;
+        IsReplay = replay;
+
+        IsInGame = true;
+    }
+
+    public void Disconnecting() => IsDisconnecting = true;
+
+    public void Disconnect()
+    {
+        IsInGame = false;
+    }
+
+    public void InvalidateAdmin() => AdminFlags = AdminFlags.None;
+
+    public void AdminCheck(AdminFlags flags)
+    {
+        IsAdminChecked = true;
+        AdminFlags = flags;
+    }
+
+    public void ChangeName(string name) => Name = name;
 }

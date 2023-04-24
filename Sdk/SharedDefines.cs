@@ -12,4 +12,10 @@ public static class SharedDefines
 
     public const string PlayerListenerInterfaceName = "ISOURCESHARP_PLAYERLISTENER";
     public const uint PlayerListenerInterfaceVersion = 1;
+
+    public const string PlayerManagerInterfaceName = "ISOURCESHARP_PLAYERMANAGER";
+    public const uint PlayerManagerInterfaceVersion = 1;
+
+    public const string AdminManagerInterfaceName = "ISOURCESHARP_ADMINMANAGER";
+    public const uint AdminManagerInterfaceVersion = 1;
 }

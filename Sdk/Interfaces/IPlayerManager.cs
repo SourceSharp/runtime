@@ -51,4 +51,9 @@ public interface IPlayerManager : IRuntime
     /// </summary>
     /// <returns>人数</returns>
     uint GetNumPlayers();
+
+    /// <summary>
+    /// 刷新全体玩家的管理员数据
+    /// </summary>
+    void RunAdminChecks();
 }

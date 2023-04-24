@@ -52,8 +52,8 @@ internal static class Bootstrap
         services.AddSingleton<IGameEventListener, GameEventListener>();
         services.AddSingleton<ICommandListener, CommandListener>();
         services.AddSingleton<IPlayerListener, PlayerListener>();
-        //services.AddSingleton<IPlayerManagerBase>();
-        //services.AddSingleton<IAdminManagerBase>()
+        services.AddSingleton<IPlayerManagerBase, PlayerManager>();
+        services.AddSingleton<IAdminManagerBase, AdminManager>();
 
         services.AddSingleton<IPluginManager, PluginManager>();
     }
