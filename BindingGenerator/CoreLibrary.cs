@@ -1,4 +1,5 @@
-﻿using CppSharp;
+﻿using System.Text;
+using CppSharp;
 using CppSharp.AST;
 using CppSharp.Generators;
 
@@ -18,6 +19,7 @@ public class CoreLibrary : ILibrary
     {
         var options = driver.Options;
         options.GeneratorKind = GeneratorKind.CSharp;
+        options.OutputDir = @"../../../../Core/Bridges";
         var module = options.AddModule("CoreBridge");
         module.IncludeDirs.Add(@"C:\Users\Bone\CLionProjects\SourceSharp\include");
         module.Headers.Add("ICore.h");
