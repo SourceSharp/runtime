@@ -5,34 +5,34 @@ using System.Text.Json;
 
 namespace SourceSharp.Sdk.Models;
 
-// TODO IPlayerInfo
+// TODO IPlayerInfo, IsAlive
 
 public abstract class GamePlayer
 {
     /// <summary>
     /// 玩家名称
     /// </summary>
-    public string Name { get; protected set; } = null!;
+    public string Name => GetName();
 
     /// <summary>
     /// IP Address
     /// </summary>
-    public IPEndPoint RemoteAddress { get; }
+    public IPEndPoint RemoteEndPoint => GetRemoteEndPoint();
 
     /// <summary>
     /// SteamId - 64
     /// </summary>
-    public ulong SteamId { get; }
+    public ulong SteamId => GetSteamId();
 
     /// <summary>
     /// 管理员权限
     /// </summary>
-    public AdminFlags AdminFlags { get; protected set; }
+    public AdminFlags AdminFlags => GetAdminFlags();
 
     /// <summary>
     /// 是否是管理员
     /// </summary>
-    public bool IsAdmin => AdminFlags != AdminFlags.None;
+    public bool IsAdmin => GetAdminFlags() != AdminFlags.None;
 
     /// <summary>
     /// 获取有效的SteamId
@@ -41,7 +41,7 @@ public abstract class GamePlayer
     {
         get
         {
-            if (!IsAuthorized)
+            if (!GetIsAuthorized())
             {
                 throw new InvalidOperationException("GamePlayer is unauthorized!");
             }
@@ -50,49 +50,55 @@ public abstract class GamePlayer
     }
 
     /// <summary>
+    /// 判断该玩家是否已经离开游戏
+    /// 该功能常用于异步读取数据时的判断
+    /// </summary>
+    public bool IsValid => !GetIsDisconnected();
+
+    /// <summary>
     /// UserId of engine
     /// </summary>
-    public int UserId { get; }
+    public int UserId => GetUserId();
 
     /// <summary>
     /// Serial number
     /// </summary>
-    public uint Serial { get; }
+    public uint Serial => GetSerial();
 
     /// <summary>
     /// Entity index
     /// </summary>
-    public int Index { get; }
+    public int Index => GetIndex();
 
     /// <summary>
     /// 玩家是否在游戏中
     /// </summary>
-    public bool IsInGame { get; protected set; }
+    public bool IsInGame => GetIsInGame();
 
     /// <summary>
     /// 是否是FakeClient
     /// </summary>
-    public bool IsFakeClient { get; protected set; }
+    public bool IsFakeClient => GetIsFakeClient();
 
     /// <summary>
     /// 是否是SourceTV/GOTV
     /// </summary>
-    public bool IsSourceTv { get; protected set; }
+    public bool IsSourceTv => GetIsSourceTv();
 
     /// <summary>
     /// 是否是Replay
     /// </summary>
-    public bool IsReplay { get; protected set; }
+    public bool IsReplay => GetIsReplay();
 
     /// <summary>
     /// 是否已完成Steam Validation
     /// </summary>
-    public bool IsAuthorized { get; protected set; }
+    public bool IsAuthorized => GetIsAuthorized();
 
     /// <summary>
     /// 正在退出游戏!
     /// </summary>
-    public bool IsDisconnecting { get; protected set; }
+    public bool IsDisconnecting => GetIsDisconnecting();
 
     /// <summary>
     /// 打印到控制台
@@ -111,10 +117,8 @@ public abstract class GamePlayer
     /// </summary>
     public abstract void Kick(string message);
 
+    #region override
 
-    /*
-     *  Override
-     */
     private readonly Guid _uniqueId = Guid.NewGuid();
 
     public override int GetHashCode()
@@ -136,12 +140,24 @@ public abstract class GamePlayer
         IncludeFields = false,
     });
 
-    protected GamePlayer(ulong steamId, IPEndPoint address, int userId, uint serial, int index)
-    {
-        SteamId = steamId;
-        RemoteAddress = address;
-        UserId = userId;
-        Serial = serial;
-        Index = index;
-    }
+    #endregion
+
+    #region internal implements
+
+    protected abstract ulong GetSteamId();
+    protected abstract uint GetSerial();
+    protected abstract int GetUserId();
+    protected abstract int GetIndex();
+    protected abstract string GetName();
+    protected abstract IPEndPoint GetRemoteEndPoint();
+    protected abstract AdminFlags GetAdminFlags();
+
+    protected abstract bool GetIsDisconnecting();
+    protected abstract bool GetIsDisconnected();
+    protected abstract bool GetIsInGame();
+    protected abstract bool GetIsAuthorized();
+    protected abstract bool GetIsFakeClient();
+    protected abstract bool GetIsSourceTv();
+    protected abstract bool GetIsReplay();
+    #endregion
 }

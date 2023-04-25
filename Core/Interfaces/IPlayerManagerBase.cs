@@ -11,4 +11,5 @@ internal interface IPlayerManagerBase : IPlayerManager
     void OnDisconnecting(int clientIndex);
     void OnDisconnected(int clientIndex);
     void UpdatePlayerName(int clientIndex, string playerName);
+    void OnNetChannelChanged(int clientIndex);
 }

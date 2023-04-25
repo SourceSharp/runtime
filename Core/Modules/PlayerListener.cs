@@ -89,16 +89,14 @@ internal sealed class PlayerListener : IPlayerListener
     /*
      * Listener
      */
-    public string? OnConnectHook(ulong steamId, string ip, ushort port, string name, string password)
+    public string? OnConnectHook(ulong steamId, IPEndPoint remoteEndPoint, string name, string password)
     {
         string? returnValue = null;
         var code = 0;
 
-        var ep = new IPEndPoint(IPAddress.Parse(ip), port);
-
         foreach (var hook in _hooks)
         {
-            var response = hook.Callback.Invoke(steamId, ep, name, password);
+            var response = hook.Callback.Invoke(steamId, remoteEndPoint, name, password);
             if (response.Code > code)
             {
                 returnValue = response.Response;

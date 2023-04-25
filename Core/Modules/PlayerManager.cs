@@ -18,8 +18,6 @@ internal sealed class PlayerManager : IPlayerManagerBase
     // TODO GetMaxClients
     private readonly List<CGamePlayer> _players;
 
-    private uint _serialNumber;
-
     public PlayerManager(ISourceSharpBase sourceSharp, IPlayerListener playerListener, IAdminManager adminManager)
     {
         _sourceSharp = sourceSharp;
@@ -27,7 +25,6 @@ internal sealed class PlayerManager : IPlayerManagerBase
         _adminManager = adminManager;
 
         _players = new(64);
-        _serialNumber = 0;
     }
 
     /*
@@ -35,7 +32,7 @@ internal sealed class PlayerManager : IPlayerManagerBase
      */
     public void OnConnected(int clientIndex, int userId, ulong steamId, string name, IPEndPoint remoteEndpoint)
     {
-        var player = new CGamePlayer(name, remoteEndpoint, userId, steamId, ++_serialNumber, clientIndex);
+        var player = new CGamePlayer(steamId, userId, clientIndex, name, remoteEndpoint);
         _players.Add(player);
         _playerListener.OnConnected(player);
     }
@@ -124,6 +121,18 @@ internal sealed class PlayerManager : IPlayerManagerBase
 
         // update name cache
         player.ChangeName(playerName);
+    }
+
+    public void OnNetChannelChanged(int clientIndex)
+    {
+        var player = _players.SingleOrDefault(x => x.Index == clientIndex);
+        if (player is null)
+        {
+            _sourceSharp.LogError($"NetChannelChanged failed: player index {clientIndex} not found");
+            return;
+        }
+
+        player.Kick("网络环境发生变化, 请重新连接!");
     }
 
     /*

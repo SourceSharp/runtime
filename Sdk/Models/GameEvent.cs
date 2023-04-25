@@ -7,11 +7,16 @@ public class GameEvent
 {
     private readonly Dictionary<string, object> _dictionary = new();
 
+    public string Name { get; } = null!;
+
     public object this[string index]
     {
         get => _dictionary[index];
         set => throw new NotImplementedException();
     }
+
+    // bool,  int, float, string
+    // sbyte, int, float, string
 
     public T Get<T>(string key)
     {

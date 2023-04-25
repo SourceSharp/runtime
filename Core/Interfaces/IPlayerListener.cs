@@ -1,4 +1,5 @@
 ﻿using SourceSharp.Core.Models;
+using System.Net;
 
 namespace SourceSharp.Core.Interfaces;
 
@@ -13,7 +14,7 @@ internal interface IPlayerListener : IListenerBase
     /// <param name="name">Steam Name</param>
     /// <param name="password">Connection Password</param>
     /// <returns>返回飞空值将会阻止链接</returns>
-    string? OnConnectHook(ulong steamId, string ip, ushort port, string name, string password);
+    string? OnConnectHook(ulong steamId, IPEndPoint endPoint, string name, string password);
 
     void OnConnected(CGamePlayer player);
     void OnAuthorized(CGamePlayer player);

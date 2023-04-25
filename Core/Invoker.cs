@@ -3,7 +3,9 @@ using SourceSharp.Core.Interfaces;
 using SourceSharp.Sdk.Models;
 using System;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace SourceSharp.Core;
 
@@ -14,6 +16,7 @@ internal static class Invoker
     private static ISourceSharpBase _sourceSharp;
     private static ICommandListener _commandListener;
     private static IPlayerManagerBase _playerManager;
+    private static IPlayerListener _playerListener;
 #nullable restore
 
     internal static void Initialize(IServiceProvider services)
@@ -22,6 +25,7 @@ internal static class Invoker
         _sourceSharp = services.GetRequiredService<ISourceSharpBase>();
         _commandListener = services.GetRequiredService<ICommandListener>();
         _playerManager = services.GetRequiredService<IPlayerManagerBase>();
+        _playerListener = services.GetRequiredService<IPlayerListener>();
     }
 
     /*
@@ -29,11 +33,16 @@ internal static class Invoker
      */
 
     [UnmanagedCallersOnly]
-    public static void OnGameFrame(sbyte simulating, int tickCount, float gameTime)
+    public static void OnGameFrame(
+        [DNNE.C99Type("uint8_t")] sbyte simulating,
+        [DNNE.C99Type("int32_t")] int tickCount,
+        [DNNE.C99Type("float")] float gameTime)
     {
         _sourceSharp.RunFrame(tickCount, gameTime);
         _pluginManager.OnGameFrame(simulating > 0);
     }
+
+    #region Command Listener
 
     [UnmanagedCallersOnly]
     public static int ServerConsoleCommand(
@@ -104,4 +113,131 @@ internal static class Invoker
 
         return new ConsoleCommand(argString, args, argc);
     }
+
+    #endregion
+
+    #region Player Manager
+
+    [UnmanagedCallersOnly]
+    public static int OnClientConnected(
+        [DNNE.C99Type("int32_t")] int clientIndex,
+        [DNNE.C99Type("int32_t")] int userId,
+        [DNNE.C99Type("uint64_t")] ulong steamId,
+        [DNNE.C99Type("const char*")] IntPtr pName,
+        [DNNE.C99Type("const char*")] IntPtr pINetAdr /* "114.114.114.114:12356" */)
+    {
+        var name = Marshal.PtrToStringAnsi(pName);
+        var iNet = Marshal.PtrToStringAnsi(pINetAdr);
+        if (name is null || iNet is null)
+        {
+            return 1;
+        }
+
+        if (!IPEndPoint.TryParse(iNet, out var ipEp))
+        {
+            return 2;
+        }
+
+        _playerManager.OnConnected(clientIndex, userId, steamId, name, ipEp);
+        return 0;
+    }
+
+    [UnmanagedCallersOnly]
+    public static void OnAuthorized(
+        [DNNE.C99Type("int32_t")] int clientIndex,
+        [DNNE.C99Type("uint64_t")] ulong steamId)
+    {
+        _playerManager.OnAuthorized(clientIndex, steamId);
+    }
+
+    [UnmanagedCallersOnly]
+    public static void OnPutInServer(
+        [DNNE.C99Type("int32_t")] int clientIndex,
+        [DNNE.C99Type("uint8_t")] sbyte fakeClient,
+        [DNNE.C99Type("uint8_t")] sbyte sourceTv,
+        [DNNE.C99Type("uint8_t")] sbyte replay)
+    {
+        _playerManager.OnPutInServer(clientIndex, fakeClient > 0, sourceTv > 0, replay > 0);
+    }
+
+    [UnmanagedCallersOnly]
+    public static void OnDisconnecting([DNNE.C99Type("int32_t")] int clientIndex)
+    {
+        _playerManager.OnDisconnecting(clientIndex);
+    }
+
+    [UnmanagedCallersOnly]
+    public static void OnDisconnected([DNNE.C99Type("int32_t")] int clientIndex)
+    {
+        _playerManager.OnDisconnected(clientIndex);
+    }
+
+    [UnmanagedCallersOnly]
+    public static void OnNameChanged(
+        [DNNE.C99Type("int32_t")] int clientIndex,
+        [DNNE.C99Type("const char*")] IntPtr pName)
+    {
+        var name = Marshal.PtrToStringAnsi(pName);
+        if (name == null)
+        {
+            return;
+        }
+        _playerManager.UpdatePlayerName(clientIndex, name);
+    }
+
+    [UnmanagedCallersOnly]
+    public static void OnNetChannelChanged([DNNE.C99Type("int32_t")] int clientIndex)
+    {
+        _playerManager.OnNetChannelChanged(clientIndex);
+    }
+
+    #endregion
+
+    #region Player Listener
+
+    /// <summary>
+    /// Connect Hook
+    /// </summary>
+    /// <returns>0 = Accept | 1 = reject | 2 = block</returns>
+    [UnmanagedCallersOnly]
+    public static int OnConnectHook(
+        [DNNE.C99Type("uint64_t")] ulong steamId,
+        [DNNE.C99Type("const char*")] IntPtr pINetAdr,
+        [DNNE.C99Type("const char*")] IntPtr pName,
+        [DNNE.C99Type("const char*")] IntPtr pPassword,
+        [DNNE.C99Type("char*")] IntPtr pRejectMessage,
+        [DNNE.C99Type("int32_t")] int rejectMessageLength)
+    {
+        var name = Marshal.PtrToStringAnsi(pName);
+        var iNet = Marshal.PtrToStringAnsi(pINetAdr);
+        var pswd = Marshal.PtrToStringAnsi(pPassword);
+        if (name is null || iNet is null || pswd is null)
+        {
+            return 2;
+        }
+
+        if (!IPEndPoint.TryParse(iNet, out var ipEp))
+        {
+            return 2;
+        }
+
+        var rejectMessage = _playerListener.OnConnectHook(steamId, ipEp, name, pswd);
+
+        if (rejectMessage is null)
+        {
+            // accept
+            return 0;
+        }
+
+        var bytes = Encoding.Default.GetBytes(rejectMessage);
+        if (bytes.Length > rejectMessageLength)
+        {
+            return 2;
+        }
+
+        Marshal.Copy(bytes, 0, pRejectMessage, rejectMessageLength);
+        return 1;
+    }
+
+    #endregion
 }
