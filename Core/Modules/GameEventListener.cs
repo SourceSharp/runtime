@@ -3,7 +3,9 @@ using SourceSharp.Core.Models;
 using SourceSharp.Core.Utils;
 using SourceSharp.Sdk;
 using SourceSharp.Sdk.Attributes;
+using SourceSharp.Sdk.Enums;
 using SourceSharp.Sdk.Models;
+using SourceSharp.Sdk.Structs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +15,14 @@ namespace SourceSharp.Core.Modules;
 
 internal sealed class GameEventListener : IGameEventListener
 {
-    private class GameEventListenerInfo : CHookCallback<Action<GameEvent>>
+    private class GameEventListenerInfo : CHookCallback<Func<GameEvent, ActionResponse<bool>>>
     {
-        internal GameEventListenerInfo(CPlugin plugin, MethodInfo method) : base(plugin, method) { }
+        public GameEventHookType HookType { get; }
+
+        internal GameEventListenerInfo(CPlugin plugin, GameEventHookType type, MethodInfo method) : base(plugin, method)
+        {
+            HookType = type;
+        }
     }
 
     private readonly Dictionary<string, List<GameEventListenerInfo>> _listener;
@@ -62,7 +69,7 @@ internal sealed class GameEventListener : IGameEventListener
                 _listener.Add(ev.Name, new());
             }
 
-            _listener[ev.Name].Add(new(plugin, hook));
+            _listener[ev.Name].Add(new(plugin, ev.Type, hook));
         }
     }
 
@@ -85,6 +92,41 @@ internal sealed class GameEventListener : IGameEventListener
                 break;
             }
         }
+    }
+
+    public bool OnFireEvent(GameEvent @event)
+    {
+        if (!_listener.TryGetValue(@event.Name, out var listeners))
+        {
+            return false;
+        }
+
+        int code = 0;
+        bool block = false;
+
+        foreach (var listener in listeners.Where(x => x.HookType is GameEventHookType.Pre))
+        {
+            var response = listener.Callback.Invoke(@event);
+            if (response.Code > code)
+            {
+                code = response.Code;
+                block = response.Response;
+            }
+        }
+
+        foreach (var listener in listeners.Where(x => x.HookType is GameEventHookType.PostNoCopy))
+        {
+            // no-copy 为不包含 event数据
+        }
+
+        foreach (var listener in listeners.Where(x => x.HookType is GameEventHookType.Post))
+        {
+            // TODO DeepCopy
+            var dummy = @event;
+            listener.Callback.Invoke(dummy);
+        }
+
+        return block;
     }
 
     /*
