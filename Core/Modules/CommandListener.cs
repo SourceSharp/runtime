@@ -26,7 +26,7 @@ internal sealed class CommandListener : ICommandListener
         {
             Command = command;
             Plugin = plugin;
-            Callback = method.CreateDelegate<T>();
+            Callback = method.CreateDelegate<T>(plugin.Instance);
         }
     }
 
