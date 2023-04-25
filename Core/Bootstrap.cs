@@ -4,6 +4,7 @@ using SourceSharp.Core.Configurations;
 using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Modules;
 using SourceSharp.Core.Utils;
+using SourceSharp.Sdk.Interfaces;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -67,7 +68,7 @@ public static class Bootstrap
         services.AddSingleton<ICommandListener, CommandListener>();
         services.AddSingleton<IPlayerListener, PlayerListener>();
         services.AddSingleton<IPlayerManagerBase, PlayerManager>();
-        services.AddSingleton<IAdminManagerBase, AdminManager>();
+        services.AddSingleton<IAdminManager, AdminManager>();
 
         services.AddSingleton<IPluginManager, PluginManager>();
     }

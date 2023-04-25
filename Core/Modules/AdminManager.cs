@@ -1,6 +1,7 @@
 ﻿using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
 using SourceSharp.Sdk;
+using SourceSharp.Sdk.Interfaces;
 using SourceSharp.Sdk.Models;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Linq;
 
 namespace SourceSharp.Core.Modules;
 
-internal sealed class AdminManager : IAdminManagerBase
+internal sealed class AdminManager : IAdminManager
 {
     private readonly ISourceSharpBase _sourceSharp;
 

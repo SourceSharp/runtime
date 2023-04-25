@@ -1,6 +1,7 @@
 ﻿using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
 using SourceSharp.Sdk;
+using SourceSharp.Sdk.Interfaces;
 using SourceSharp.Sdk.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +13,14 @@ internal sealed class PlayerManager : IPlayerManagerBase
 {
     private readonly ISourceSharpBase _sourceSharp;
     private readonly IPlayerListener _playerListener;
-    private readonly IAdminManagerBase _adminManager;
+    private readonly IAdminManager _adminManager;
 
     // TODO GetMaxClients
     private readonly List<CGamePlayer> _players;
 
     private uint _serialNumber;
 
-    public PlayerManager(ISourceSharpBase sourceSharp, IPlayerListener playerListener, IAdminManagerBase adminManager)
+    public PlayerManager(ISourceSharpBase sourceSharp, IPlayerListener playerListener, IAdminManager adminManager)
     {
         _sourceSharp = sourceSharp;
         _playerListener = playerListener;

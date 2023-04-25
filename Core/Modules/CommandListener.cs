@@ -5,6 +5,7 @@ using SourceSharp.Core.Utils;
 using SourceSharp.Sdk;
 using SourceSharp.Sdk.Attributes;
 using SourceSharp.Sdk.Enums;
+using SourceSharp.Sdk.Interfaces;
 using SourceSharp.Sdk.Models;
 using System;
 using System.Collections.Generic;
@@ -42,9 +43,9 @@ internal sealed class CommandListener : ICommandListener
     private readonly Dictionary<string, List<ClientConsoleEvent>> _client;
     private readonly Dictionary<string, List<ServerConsoleEvent>> _server;
 
-    private readonly IAdminManagerBase _adminManager;
+    private readonly IAdminManager _adminManager;
 
-    public CommandListener(IAdminManagerBase adminManager)
+    public CommandListener(IAdminManager adminManager)
     {
         _client = new();
         _server = new();

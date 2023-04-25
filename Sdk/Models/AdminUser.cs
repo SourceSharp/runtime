@@ -1,39 +1,60 @@
 ﻿using SourceSharp.Sdk.Enums;
-using System;
 
 namespace SourceSharp.Sdk.Models;
 
 public abstract class AdminUser
 {
-    public uint Id { get; protected set; }
-    public string Name { get; protected set; } = "TempAdmin::" + Guid.NewGuid();
-    public ulong SteamId { get; protected set; }
-    public AdminFlags Flags => _accessFlags;
+    /// <summary>
+    /// 管理员Id
+    /// </summary>
+    public uint Id => GetId();
 
-    private AdminFlags _accessFlags = AdminFlags.None;
+    /// <summary>
+    /// 管理员名字
+    /// </summary>
+    public string Name => GetName();
+
+    /// <summary>
+    /// 管理员SteamId
+    /// </summary>
+    public ulong SteamId => GetSteamId();
+
+    /// <summary>
+    /// 管理员AdminFlags
+    /// </summary>
+    public AdminFlags Flags => GetFlags();
 
     /// <summary>
     /// 覆盖Flags
     /// </summary>
     /// <param name="flags">新的Flags</param>
-    public void SetAdminFlags(AdminFlags flags) => _accessFlags = flags;
-     
+    public abstract void SetAdminFlags(AdminFlags flags);
+
     /// <summary>
     /// 新增Access Flags
     /// </summary>
     /// <param name="flags">要增加的Flags</param>
-    public void AddAdminFlags(AdminFlags flags) => _accessFlags |= flags;
+    public abstract void AddAdminFlags(AdminFlags flags);
 
     /// <summary>
     /// 清除Access Flags
     /// </summary>
     /// <param name="flags">要删除的Flags</param>
-    public void RemoveAdminFlags(AdminFlags flags) => _accessFlags &= ~flags;
+    public abstract void RemoveAdminFlags(AdminFlags flags);
 
     /// <summary>
     /// 检查Access Flags
     /// </summary>
     /// <param name="flags">要检查的Flags</param>
     /// <returns>拥有指定的Flags</returns>
-    public bool HasFlags(AdminFlags flags) => _accessFlags.HasFlag(flags);
+    public abstract bool HasFlags(AdminFlags flags);
+
+    #region internal implements
+
+    protected abstract uint GetId();
+    protected abstract string GetName();
+    protected abstract ulong GetSteamId();
+    protected abstract AdminFlags GetFlags();
+
+    #endregion
 }
