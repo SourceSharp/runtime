@@ -2,7 +2,7 @@
 
 namespace SourceSharp.Core.Interfaces;
 
-internal interface ICommandListener : IModuleBase
+internal interface ICommandListener : IListenerBase
 {
     void OnServerConsoleCommand(ConsoleCommand command);
 

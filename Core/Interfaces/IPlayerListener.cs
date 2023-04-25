@@ -2,7 +2,7 @@
 
 namespace SourceSharp.Core.Interfaces;
 
-internal interface IPlayerListener : IModuleBase
+internal interface IPlayerListener : IListenerBase
 {
     /// <summary>
     /// ConnectHook - ProcessConnectionlessPacket

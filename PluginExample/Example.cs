@@ -35,7 +35,7 @@ public class Example : PluginBase, IExportInterface
         => _sourceSharp.LogMessage("test command executed: " + command.ArgString);
 
     [ClientConsoleCommand("ss_c_test", "测试命令", ConVarFlags.Release | ConVarFlags.ServerCanExecute, AdminFlags.ChangeMap)]
-    private void TestClientCommand(ConsoleCommand command)
+    private void TestClientCommand(ConsoleCommand command, GamePlayer? player)
         => _sourceSharp.LogMessage("test command executed: " + command.ArgString);
 
     [GameEvent("player_spawn")]

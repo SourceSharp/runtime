@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+      <TargetFramework>net7.0</TargetFramework>
+      <ImplicitUsings>disable</ImplicitUsings>
+      <LangVersion>11</LangVersion>
+      <Nullable>enable</Nullable>
+      <AssemblyName>SourceSharp.Core.Test</AssemblyName>
+      <RootNamespace>SourceSharp.Core.Test</RootNamespace>
+      <VersionPrefix>1.0</VersionPrefix>
+      <VersionSuffix>1</VersionSuffix>
+      <Version>$(VersionPrefix).$(VersionSuffix)</Version>
+      <PackageProjectUrl>https://github.com/SourceSharp</PackageProjectUrl>
+      <Copyright>©2023 Kyle, Bone</Copyright>
+      <RepositoryUrl>https://github.com/SourceSharp/runtime</RepositoryUrl>
+      <EnableDynamicLoading>true</EnableDynamicLoading>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+</Project>

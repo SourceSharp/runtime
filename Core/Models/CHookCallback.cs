@@ -11,6 +11,6 @@ internal abstract class CHookCallback<T> where T : Delegate
     protected CHookCallback(CPlugin plugin, MethodInfo method)
     {
         Plugin = plugin;
-        Callback = method.CreateDelegate<T>();
+        Callback = method.CreateDelegate<T>(plugin.Instance);
     }
 }

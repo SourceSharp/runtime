@@ -1,4 +1,5 @@
 ﻿using McMaster.NETCore.Plugins;
+using Microsoft.Extensions.DependencyInjection;
 using SourceSharp.Core.Configurations;
 using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
@@ -16,30 +17,41 @@ namespace SourceSharp.Core;
 internal sealed class PluginManager : IPluginManager
 {
     private readonly CoreConfig _config;
+    private readonly IServiceProvider _services;
     private readonly ISourceSharpBase _sourceSharp;
     private readonly IShareSystemBase _shareSystem;
 
     private readonly List<CPlugin> _plugins;
+    private readonly List<IListenerBase> _listeners;
 
-    // TODO MaxPlayers correct value
-    private readonly uint _maxPlayers;
+    // IListener
+    private IGameEventListener _gameEventListener = null!;
+    private IPlayerListener _playerListener = null!;
+    private ICommandListener _commandListener = null!;
 
-    public PluginManager(CoreConfig config, ISourceSharpBase sourceSharp, IShareSystemBase shareSystem)
+    public PluginManager(CoreConfig config, ISourceSharpBase sourceSharp, IShareSystemBase shareSystem, IServiceProvider services)
     {
         _config = config;
+        _services = services;
         _sourceSharp = sourceSharp;
         _shareSystem = shareSystem;
 
         _plugins = new();
-
-        _maxPlayers = 64;
+        _listeners = new();
     }
 
     public void Initialize()
     {
+        _listeners.AddRange(_services.GetServices<IListenerBase>());
+
+        // Prevent DI for recursion
+        _gameEventListener = _services.GetRequiredService<IGameEventListener>();
+        _playerListener = _services.GetRequiredService<IPlayerListener>();
+        _commandListener = _services.GetRequiredService<ICommandListener>();
+
         foreach (var path in Directory.GetDirectories(Path.Combine("plugins"), "*", SearchOption.TopDirectoryOnly))
         {
-            PluginLoader? loader = null;
+            CPlugin? plugin = null;
             var name = Path.GetFileName(path);
             try
             {
@@ -52,7 +64,7 @@ internal sealed class PluginManager : IPluginManager
 
                 var absolutePath = Path.GetFullPath(file);
 
-                loader = PluginLoader.CreateFromAssemblyFile(absolutePath, config =>
+                var loader = PluginLoader.CreateFromAssemblyFile(absolutePath, config =>
                 {
                     config.PreferSharedTypes = true;
                     config.IsUnloadable = true;
@@ -68,18 +80,19 @@ internal sealed class PluginManager : IPluginManager
                     throw new InvalidOperationException("Failed to create instance.");
                 }
 
-                tPlugin.SetProtectedReadOnlyField("_sourceSharp", instance, _sourceSharp);
-                tPlugin.SetProtectedReadOnlyField("_shareSystem", instance, _shareSystem);
-                tPlugin.SetStaticProtectedPropertyNoSetter("MaxPlayers", instance, _maxPlayers);
-
                 var pa = Attribute.GetCustomAttribute(tPlugin, typeof(PluginAttribute)) as PluginAttribute ??
                          throw new BadImageFormatException("Plugin metadata not found");
+
+                plugin = new CPlugin(file, loader, instance, pa);
+                _plugins.Add(plugin);
+
+                tPlugin.SetProtectedReadOnlyField("_sourceSharp", instance, _sourceSharp);
+                tPlugin.SetProtectedReadOnlyField("_shareSystem", instance, _shareSystem);
 
                 var frameHooks = tPlugin.GetMethods()
                     .Where(m => Attribute.GetCustomAttributes(m, typeof(GameFrameAttribute)).Any())
                     .ToList();
 
-                Action<bool>? gh = null;
                 if (frameHooks.Any())
                 {
                     if (frameHooks.Count > 1)
@@ -89,15 +102,20 @@ internal sealed class PluginManager : IPluginManager
 
                     var frameHook = frameHooks.Single();
                     frameHook.CheckReturnAndParameters(typeof(void), new[] { typeof(bool) });
-                    gh = frameHook.CreateDelegate<Action<bool>>();
+                    plugin.AddGameHook(frameHook);
                 }
 
-                _plugins.Add(new(file, loader, instance, gh, pa));
-                _sourceSharp.PrintLine($"Plugin <{name}> checked.");
+                foreach (var listener in _listeners)
+                {
+                    listener.OnPluginLoad(plugin);
+                }
+
+                _plugins.Add(plugin);
+                // _sourceSharp.PrintLine($"Plugin <{name}> checked.");
             }
             catch (Exception e)
             {
-                loader?.Dispose();
+                plugin?.UpdateStatus(PluginStatus.Failed);
                 _sourceSharp.LogError($"Failed to load plugin <{name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
             }
         }
@@ -118,7 +136,7 @@ internal sealed class PluginManager : IPluginManager
             }
             catch (Exception e)
             {
-                plugin.Status = PluginStatus.Error;
+                plugin.UpdateStatus(PluginStatus.Error);
 
                 if (e is not InvalidOperationException)
                 {
@@ -163,12 +181,12 @@ internal sealed class PluginManager : IPluginManager
                 throw new InvalidOperationException();
             }
 
-            plugin.Status = PluginStatus.Running;
+            plugin.UpdateStatus(PluginStatus.Running);
             _sourceSharp.PrintLine($"Plugin <{plugin.Name}> loaded.");
         }
         catch (Exception e)
         {
-            plugin.Status = PluginStatus.Failed;
+            plugin.UpdateStatus(PluginStatus.Failed);
 
             if (e is not InvalidOperationException)
             {
@@ -193,9 +211,15 @@ internal sealed class PluginManager : IPluginManager
                 }
             }
 
+            foreach (var listener in _listeners)
+            {
+                listener.OnPluginUnload(plugin);
+            }
+
             plugin.Instance.OnShutdown();
             plugin.Loader.Dispose();
-            plugin.Status = PluginStatus.None;
+            plugin.UpdateStatus(PluginStatus.None);
+            _plugins.Remove(plugin);
         }
         catch (Exception e)
         {

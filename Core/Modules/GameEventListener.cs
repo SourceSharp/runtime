@@ -29,7 +29,12 @@ internal sealed class GameEventListener : IGameEventListener
 
     public void Initialize()
     {
+        // Do nothing
+    }
 
+    public void Shutdown()
+    {
+        _listener.Clear();
     }
 
     public void OnPluginLoad(CPlugin plugin)
@@ -80,11 +85,6 @@ internal sealed class GameEventListener : IGameEventListener
                 break;
             }
         }
-    }
-
-    public void Shutdown()
-    {
-        throw new NotImplementedException();
     }
 
     /*

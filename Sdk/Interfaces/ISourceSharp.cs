@@ -70,4 +70,10 @@ public interface ISourceSharp : IRuntime
     /// <param name="readFromPtr">使用指针读取</param>
     /// <returns>gpGlobals->tickcount 或 缓存的值</returns>
     int GetGameTickCount(bool readFromPtr = false);
+
+    /// <summary>
+    /// 获取最大玩家人数
+    /// </summary>
+    /// <returns>最大玩家人数</returns>
+    int GetMaxClients();
 }

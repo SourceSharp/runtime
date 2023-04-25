@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace SourceSharp.Core.Utils;
@@ -28,20 +31,18 @@ internal static class Reflection
         }
     }
 
-    public static void SetStaticProtectedPropertyNoSetter(this Type type, string name, object instance, object value)
+    public static void SetProtectedReadOnlyField(this Type type, string name, object instance, object value)
     {
-        var field = type.GetField($"<{name}>k__BackingField",
-                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static)
-                    ?? throw new MissingMemberException("Property not found.", name);
+        var field = type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?? throw new MissingFieldException(type.FullName, name);
 
         field.SetValue(instance, value);
     }
 
-    public static void SetProtectedReadOnlyField(this Type type, string name, object instance, object value)
+    public static IEnumerable<T> GetAllServices<T>(this IServiceProvider provider)
     {
-        var field = type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic)
-                    ?? throw new MissingFieldException("Field not found.", name);
-
-        field.SetValue(instance, value);
+        var site = typeof(ServiceProvider).GetProperty("CallSiteFactory", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(provider)!;
+        var desc = site.GetType().GetField("_descriptors", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(site) as ServiceDescriptor[];
+        return desc!.Select(s => provider.GetRequiredService(s.ServiceType)).OfType<T>();
     }
 }

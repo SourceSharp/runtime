@@ -40,7 +40,13 @@ internal sealed class PlayerListener : IPlayerListener
 
     public void Initialize()
     {
-        throw new NotImplementedException();
+        // Do nothing...
+    }
+
+    public void Shutdown()
+    {
+        _events.Clear();
+        _hooks.Clear();
     }
 
     public void OnPluginLoad(CPlugin plugin)
@@ -78,11 +84,6 @@ internal sealed class PlayerListener : IPlayerListener
     {
         _hooks.RemoveAll(x => x.Plugin.Equals(plugin));
         _events.RemoveAll(x => x.Plugin.Equals(plugin));
-    }
-
-    public void Shutdown()
-    {
-        throw new NotImplementedException();
     }
 
     /*

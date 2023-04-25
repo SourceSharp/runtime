@@ -36,9 +36,6 @@ public abstract class PluginBase : IPlugin
 #nullable disable
     protected readonly ISourceSharp _sourceSharp;
     protected readonly IShareSystem _shareSystem;
-    protected readonly IRuntime _myself;
-
-    public static uint MaxPlayers { get; }
 #nullable restore
 
     public virtual bool OnLoad()

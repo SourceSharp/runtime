@@ -53,17 +53,17 @@ internal abstract class SourceSharpBase : ISourceSharpBase
 
     public virtual void LogError(string message)
     {
-        throw new NotImplementedException();
+        PrintError(message);
     }
 
     public virtual void LogMessage(string message)
     {
-        throw new NotImplementedException();
+        PrintLog(message);
     }
 
     public virtual void PrintLine(string message)
     {
-        throw new NotImplementedException();
+        Console.WriteLine(message);
     }
 
     public virtual int GetGameTickCount(bool readFromPtr = false)
@@ -76,6 +76,11 @@ internal abstract class SourceSharpBase : ISourceSharpBase
         throw new NotImplementedException();
     }
 
+    public virtual int GetMaxClients()
+    {
+        throw new NotImplementedException();
+    }
+
     /*
      * ISourceSharpBase
      */
@@ -83,5 +88,27 @@ internal abstract class SourceSharpBase : ISourceSharpBase
     public virtual void RunFrame(int tickCount, float gameTime)
     {
         throw new NotImplementedException();
+    }
+
+    protected virtual void PrintError(string message)
+    {
+        ConsoleColor color = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.Write("[Fail] ");
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.Write($"{DateTime.Now:yyyy/MM/dd HH:mm:ss} [SourceSharp] ");
+        Console.ForegroundColor = color;
+        Console.WriteLine(message);
+    }
+
+    protected virtual void PrintLog(string message)
+    {
+        ConsoleColor color = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write("[Info] ");
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.Write($"{DateTime.Now:yyyy/MM/dd HH:mm:ss} [SourceSharp] ");
+        Console.ForegroundColor = color;
+        Console.WriteLine(message);
     }
 }

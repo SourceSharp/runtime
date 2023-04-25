@@ -3,6 +3,7 @@ using SourceSharp.Sdk.Attributes;
 using SourceSharp.Sdk.Enums;
 using SourceSharp.Sdk.Interfaces;
 using System;
+using System.Reflection;
 using System.Text.Json;
 
 namespace SourceSharp.Core.Models;
@@ -15,9 +16,9 @@ internal sealed class CPlugin
 
     public IPlugin Instance { get; }
 
-    public PluginStatus Status { get; set; }
+    public PluginStatus Status { get; private set; }
 
-    public Action<bool>? FrameHook { get; }
+    public Action<bool>? FrameHook { get; private set; }
 
     // copyright
     public string Name { get; }
@@ -26,15 +27,12 @@ internal sealed class CPlugin
     public string Url { get; }
     public string Description { get; }
 
-    public CPlugin(string path, PluginLoader loader, IPlugin instance,
-        Action<bool>? frameHook,
-        PluginAttribute pa)
+    public CPlugin(string path, PluginLoader loader, IPlugin instance, PluginAttribute pa)
     {
         Path = path;
         Loader = loader;
         Instance = instance;
         Status = PluginStatus.Checked;
-        FrameHook = frameHook;
 
         Name = pa.Name;
         Author = pa.Author;
@@ -42,6 +40,9 @@ internal sealed class CPlugin
         Url = pa.Url;
         Description = pa.Description;
     }
+
+    public void UpdateStatus(PluginStatus status) => Status = status;
+    public void AddGameHook(MethodInfo method) => FrameHook = method.CreateDelegate<Action<bool>>(Instance);
 
     public override string ToString()
         => JsonSerializer.Serialize(new { Name, Author, Version, Url, Description }, new JsonSerializerOptions { WriteIndented = true });

@@ -54,12 +54,13 @@ internal sealed class CommandListener : ICommandListener
 
     public void Initialize()
     {
-        throw new NotImplementedException();
+        // do nothing
     }
 
     public void Shutdown()
     {
-        throw new NotImplementedException();
+        _server.Clear();
+        _client.Clear();
     }
 
     public void OnPluginLoad(CPlugin plugin)

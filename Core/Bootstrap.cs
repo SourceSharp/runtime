@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SourceSharp.Core.Configurations;
 using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Modules;
+using SourceSharp.Core.Utils;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SourceSharp.Core;
 
-internal static class Bootstrap
+public static class Bootstrap
 {
     private static readonly CancellationTokenSource CancellationTokenSource = new();
 
@@ -22,6 +23,8 @@ internal static class Bootstrap
     [UnmanagedCallersOnly]
     public static void ShutdownSourceSharp() => CancellationTokenSource.Cancel(false);
 
+    public static void InitializeTest() => Initialize();
+
     private static void Initialize()
     {
         // bin
@@ -31,12 +34,23 @@ internal static class Bootstrap
         // config
         var path = Path.Combine(parent, "configs", "core.json");
 
+#if DEBUG
+        if (!File.Exists(path))
+        {
+            path = Path.Combine(dir, "config.json");
+        }
+#endif
+
         var services = new ServiceCollection();
         var configuration = new ConfigurationBuilder().AddJsonFile(path).Build();
 
         ConfigureServices(services, configuration);
 
-        var serviceProvider = services.BuildServiceProvider();
+        var serviceProvider = services.BuildServiceProvider(options: new ServiceProviderOptions
+        {
+            ValidateOnBuild = true,
+            ValidateScopes = true
+        });
 
         Boot(serviceProvider);
     }
@@ -60,12 +74,22 @@ internal static class Bootstrap
 
     private static void Boot(IServiceProvider services)
     {
-        var pluginManager = services.GetRequiredService<IPluginManager>();
 
-        pluginManager.Initialize();
+        // Init IModuleBase
+        foreach (var module in services.GetAllServices<IModuleBase>())
+        {
+            module.Initialize();
+        }
+
+        // Plugin Manager should be the LAST!
+        services.GetRequiredService<IPluginManager>().Initialize();
         Invoker.Initialize(services);
 
         Task.Run(async () => await SignalThread(services));
+
+#if DEBUG
+        Console.WriteLine("Boot!");
+#endif
     }
 
     private static async Task SignalThread(IServiceProvider services)
@@ -82,7 +106,12 @@ internal static class Bootstrap
                 continue;
             }
 
-            pluginManager.Shutdown();
+            // Shutdown !!!
+            foreach (var module in services.GetAllServices<IModuleBase>())
+            {
+                module.Shutdown();
+            }
+            services.GetRequiredService<IPluginManager>().Shutdown();
             break;
         }
     }
