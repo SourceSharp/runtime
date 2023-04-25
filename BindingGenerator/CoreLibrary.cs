@@ -22,12 +22,14 @@ public class CoreLibrary : ILibrary
         options.OutputDir = @"../../../../Core/Bridges";
         var module = options.AddModule("CoreBridge");
         module.IncludeDirs.Add(@"C:\Users\Bone\CLionProjects\SourceSharp\include");
-        module.Headers.Add("ICore.h");
-        module.LibraryDirs.Add(@"C:\Users\Bone\CLionProjects\SourceSharp\build\windows\x86\release");
-        module.Libraries.Add("sourcesharp.dll");
+        module.Headers.Add("Core.h");
+        module.SharedLibraryName = "sourcesharp";
+        // module.LibraryDirs.Add(@"C:\Users\Bone\CLionProjects\SourceSharp\build\windows\x86\release");
+        // module.Libraries.Add("sourcesharp.dll");
     }
 
     public void SetupPasses(Driver driver)
     {
+        
     }
 }
