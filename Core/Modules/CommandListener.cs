@@ -90,7 +90,7 @@ internal sealed class CommandListener : ICommandListener
                 {
                     _server.Add(sc.Command, new());
 
-                    // TODO register to Engine
+                    Bridges.ConCommand.RegServerCommand(sc.Command);
                 }
 
                 _server[sc.Command].Add(new(new ConsoleCommandInfo(sc.Command, sc.Description, sc.Flags, AdminFlags.None), plugin, hook));
@@ -103,7 +103,7 @@ internal sealed class CommandListener : ICommandListener
                 {
                     _client.Add(cc.Command, new());
 
-                    // TODO register to Engine
+                    Bridges.ConCommand.RegClientCommand(cc.Command);
                 }
 
                 _client[cc.Command].Add(new(new ConsoleCommandInfo(cc.Command, cc.Description, cc.Flags, cc.AccessFlags), plugin, hook));

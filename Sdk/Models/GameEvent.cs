@@ -1,35 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace SourceSharp.Sdk.Models;
 
-public class GameEvent
+public abstract class GameEvent
 {
-    private readonly Dictionary<string, object> _dictionary = new();
+    /// <summary>
+    /// Event 名字
+    /// </summary>
+    public string Name => GetName();
 
-    public string Name { get; } = null!;
+    public bool Broadcast => GetBroadcast();
 
-    public object this[string index]
-    {
-        get => _dictionary[index];
-        set => throw new NotImplementedException();
-    }
+    /// <summary>
+    /// 读取Event的值
+    /// </summary>
+    /// <typeparam name="T">bool, int, float, string</typeparam>
+    /// <param name="key">字段名</param>
+    /// <returns>值</returns>
+    public abstract T Get<T>(string key) where T : IConvertible;
 
-    // bool,  int, float, string
-    // sbyte, int, float, string
+    /// <summary>
+    /// 设置Event的值
+    /// </summary>
+    /// <typeparam name="T">bool, int, float, string</typeparam>
+    /// <param name="key">字段名</param>
+    /// <param name="value"></param>
+    /// <returns>True = 成功</returns>
+    public abstract bool Set<T>(string key, T value) where T : IConvertible;
 
-    public T Get<T>(string key)
-    {
-        if (!_dictionary.TryGetValue(key, out var value))
-        {
-            throw new InvalidOperationException($"Key '{key}' does not exists.");
-        }
-
-        if (value is not T v)
-        {
-            throw new InvalidOperationException($"Key '{key}' is not type {typeof(T).Name}");
-        }
-
-        return v;
-    }
+    protected abstract string GetName();
+    protected abstract void SetBroadcast(bool broadcast);
+    protected abstract bool GetBroadcast();
 }

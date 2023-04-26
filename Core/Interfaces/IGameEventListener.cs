@@ -1,4 +1,4 @@
-﻿using SourceSharp.Sdk.Models;
+﻿using SourceSharp.Core.Models;
 
 namespace SourceSharp.Core.Interfaces;
 
@@ -9,5 +9,11 @@ internal interface IGameEventListener : IListenerBase
     /// </summary>
     /// <param name="event">CGameEvent</param>
     /// <returns>True = 阻止事件</returns>
-    bool OnFireEvent(GameEvent @event);
+    bool OnEventFire(CGameEvent @event);
+
+    /// <summary>
+    /// 事件触发后调用
+    /// </summary>
+    /// <param name="event">CGameEvent</param>
+    void OnEventFired(CGameEvent @event);
 }

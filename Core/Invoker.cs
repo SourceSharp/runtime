@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SourceSharp.Core.Bridges;
 using SourceSharp.Core.Interfaces;
+using SourceSharp.Core.Models;
 using SourceSharp.Sdk.Models;
 using System;
 using System.Linq;
@@ -17,6 +19,7 @@ internal static class Invoker
     private static ICommandListener _commandListener;
     private static IPlayerManagerBase _playerManager;
     private static IPlayerListener _playerListener;
+    private static IGameEventListener _gameEventListener;
 #nullable restore
 
     internal static void Initialize(IServiceProvider services)
@@ -26,6 +29,7 @@ internal static class Invoker
         _commandListener = services.GetRequiredService<ICommandListener>();
         _playerManager = services.GetRequiredService<IPlayerManagerBase>();
         _playerListener = services.GetRequiredService<IPlayerListener>();
+        _gameEventListener = services.GetRequiredService<IGameEventListener>();
     }
 
     /*
@@ -112,6 +116,24 @@ internal static class Invoker
         }).ToArray() : new[] { argString };
 
         return new ConsoleCommand(argString, args, argc);
+    }
+
+    #endregion
+
+    #region Event Listener
+
+    [UnmanagedCallersOnly]
+    public static int OnFireEvent([DNNE.C99Type("const void*")] IntPtr pEvent)
+    {
+        var @event = IGameEvent.__CreateInstance(pEvent);
+        return _gameEventListener.OnEventFire(new CGameEvent(@event, false)) ? 1 : 0;
+    }
+
+    [UnmanagedCallersOnly]
+    public static void OnFiredEvent([DNNE.C99Type("const void*")] IntPtr pEvent)
+    {
+        var @event = IGameEvent.__CreateInstance(pEvent);
+        _gameEventListener.OnEventFired(new CGameEvent(@event, true));
     }
 
     #endregion

@@ -18,19 +18,19 @@ internal sealed class GameEventListener : IGameEventListener
     private class GameEventListenerInfo : CHookCallback<Func<GameEvent, ActionResponse<bool>>>
     {
         public GameEventHookType HookType { get; }
+        public int Priority { get; }
 
-        internal GameEventListenerInfo(CPlugin plugin, GameEventHookType type, MethodInfo method) : base(plugin, method)
+        internal GameEventListenerInfo(CPlugin plugin, GameEventHookType type, int priority, MethodInfo method) : base(plugin, method)
         {
             HookType = type;
+            Priority = priority;
         }
     }
 
     private readonly Dictionary<string, List<GameEventListenerInfo>> _listener;
-    private readonly ISourceSharpBase _sourceSharp;
 
-    public GameEventListener(ISourceSharpBase sourceSharp)
+    public GameEventListener()
     {
-        _sourceSharp = sourceSharp;
         _listener = new();
     }
 
@@ -67,9 +67,11 @@ internal sealed class GameEventListener : IGameEventListener
             if (!_listener.ContainsKey(ev.Name))
             {
                 _listener.Add(ev.Name, new());
+
+                Bridges.Event.RegGameEventHook(ev.Name);
             }
 
-            _listener[ev.Name].Add(new(plugin, ev.Type, hook));
+            _listener[ev.Name].Add(new(plugin, ev.Type, ev.Priority, hook));
         }
     }
 
@@ -94,17 +96,19 @@ internal sealed class GameEventListener : IGameEventListener
         }
     }
 
-    public bool OnFireEvent(GameEvent @event)
+    public bool OnEventFire(CGameEvent @event)
     {
         if (!_listener.TryGetValue(@event.Name, out var listeners))
         {
             return false;
         }
 
-        int code = 0;
-        bool block = false;
+        var code = 0;
+        var block = false;
 
-        foreach (var listener in listeners.Where(x => x.HookType is GameEventHookType.Pre))
+        foreach (var listener in listeners
+                     .Where(x => x.HookType is GameEventHookType.Pre)
+                     .OrderByDescending(x => x.Priority))
         {
             var response = listener.Callback.Invoke(@event);
             if (response.Code > code)
@@ -114,19 +118,22 @@ internal sealed class GameEventListener : IGameEventListener
             }
         }
 
-        foreach (var listener in listeners.Where(x => x.HookType is GameEventHookType.PostNoCopy))
-        {
-            // no-copy 为不包含 event数据
-        }
-
-        foreach (var listener in listeners.Where(x => x.HookType is GameEventHookType.Post))
-        {
-            // TODO DeepCopy
-            var dummy = @event;
-            listener.Callback.Invoke(dummy);
-        }
-
         return block;
+    }
+
+    public void OnEventFired(CGameEvent @event)
+    {
+        if (!_listener.TryGetValue(@event.Name, out var listeners))
+        {
+            return;
+        }
+
+        foreach (var listener in listeners
+                     .Where(x => x.HookType is GameEventHookType.Post)
+                     .OrderByDescending(x => x.Priority))
+        {
+            listener.Callback.Invoke(@event);
+        }
     }
 
     /*
