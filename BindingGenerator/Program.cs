@@ -2,8 +2,9 @@
 using SourceSharp.BindingGenerator;
 
 foreach (var module in new string [] {
+    "SourceSharp",
     "ConCommand",
-    "Event"
+    "Event",
 })
 {
     ConsoleDriver.Run(new CoreLibrary(module));

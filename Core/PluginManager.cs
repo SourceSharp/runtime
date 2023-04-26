@@ -226,9 +226,4 @@ internal sealed class PluginManager : IPluginManager
             _sourceSharp.LogError($"Error during shutting down on <{plugin.Name}>: {e.Message}{Environment.NewLine}{e.StackTrace}");
         }
     }
-
-    private void InspectPlugin(CPlugin plugin)
-    {
-        throw new NotImplementedException();
-    }
 }

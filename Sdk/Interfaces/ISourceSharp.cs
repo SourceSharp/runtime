@@ -58,22 +58,20 @@ public interface ISourceSharp : IRuntime
     void InvokeNextFrame(Action action);
 
     /// <summary>
-    /// 当前地图的运行时间
-    /// </summary>
-    /// <param name="readPtr">使用指针读取</param>
-    /// <returns>gpGlobals->curtime 或 缓存的值</returns>
-    int GetGameTime(bool readFromPtr = false);
-
-    /// <summary>
-    /// 当前地图运行的帧数
-    /// </summary>
-    /// <param name="readFromPtr">使用指针读取</param>
-    /// <returns>gpGlobals->tickcount 或 缓存的值</returns>
-    int GetGameTickCount(bool readFromPtr = false);
-
-    /// <summary>
     /// 获取最大玩家人数
     /// </summary>
     /// <returns>最大玩家人数</returns>
     int GetMaxClients();
+
+    /// <summary>
+    /// 获取最大真实人类玩家数
+    /// </summary>
+    /// <returns></returns>
+    int GetMaxHumanPlayers();
+
+    /// <summary>
+    /// 获取当前的游戏
+    /// </summary>
+    /// <returns>EngineVersion</returns>
+    GameEngineVersion GetEngineVersion();
 }

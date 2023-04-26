@@ -42,7 +42,7 @@ internal static class Invoker
         [DNNE.C99Type("int32_t")] int tickCount,
         [DNNE.C99Type("float")] float gameTime)
     {
-        _sourceSharp.RunFrame(tickCount, gameTime);
+        _sourceSharp.RunFrame();
         _pluginManager.OnGameFrame(simulating > 0);
     }
 

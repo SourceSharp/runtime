@@ -14,8 +14,4 @@ public enum PathType
     /// SourceSharp绝对路径
     /// </summary>
     SourceSharpAbsolute,
-    /// <summary>
-    /// SourceSharp相对路径
-    /// </summary>
-    SourceSharpRelative
 }
