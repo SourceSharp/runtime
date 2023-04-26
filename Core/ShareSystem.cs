@@ -10,15 +10,13 @@ internal sealed class ShareSystem : ShareSystemBase
 {
     private class SharedInterface
     {
-#nullable disable
-        public IRuntime @Interface { get; }
-        public IPlugin @Plugin { get; }
-#nullable restore
+        public IRuntime Instance { get; }
+        public IPlugin Plugin { get; }
 
-        public SharedInterface(IRuntime @interface, IPlugin @plugin)
+        public SharedInterface(IRuntime instance, IPlugin plugin)
         {
-            @Interface = @interface;
-            @Plugin = @plugin;
+            Instance = instance;
+            Plugin = plugin;
         }
     }
 
@@ -33,7 +31,7 @@ internal sealed class ShareSystem : ShareSystemBase
     {
         var name = @interface.GetInterfaceName();
 
-        if (_interfaces.Any(x => x.Interface.GetInterfaceName() == name))
+        if (_interfaces.Any(x => x.Instance.GetInterfaceName() == name))
         {
             throw new InvalidOperationException($"Interface with name {name} already exists!");
         }
@@ -46,21 +44,21 @@ internal sealed class ShareSystem : ShareSystemBase
         var @interface = _interfaces.SingleOrDefault(x => x.GetType() == typeof(T)) ??
                          throw new NotImplementedException($"Interface <{nameof(T)}> not found.");
 
-        if (@interface.Interface.GetInterfaceVersion() < version)
+        if (@interface.Instance.GetInterfaceVersion() < version)
         {
             throw new NotImplementedException($"Interface <{nameof(T)}> version is lower.");
         }
 
-        return (T)@interface.Interface;
+        return (T)@interface.Instance;
     }
 
     public override T? GetInterface<T>(uint version) where T : class
-        => (T?)_interfaces.SingleOrDefault(x => x.GetType() == typeof(T) && x.Interface.GetInterfaceVersion() >= version)?.Interface;
+        => (T?)_interfaces.SingleOrDefault(x => x.GetType() == typeof(T) && x.Instance.GetInterfaceVersion() >= version)?.Instance;
 
     public override List<IRuntime> CheckUnloadPluginInterfaces(IPlugin plugin)
     {
         var interfaces = _interfaces.Where(x => x.Plugin == plugin).ToList();
         _interfaces.RemoveAll(x => x.Plugin == plugin);
-        return interfaces.Select(x => x.Interface).ToList();
+        return interfaces.Select(x => x.Instance).ToList();
     }
 }
