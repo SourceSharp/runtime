@@ -12,16 +12,16 @@ using __IntPtr = global::System.IntPtr;
 
 #pragma warning disable CS0109 // Member does not hide an inherited member; new keyword is not required
 
-namespace CoreBridge
+namespace SourceSharp.Core.Bridges
 {
-    public unsafe partial class Core
+    public unsafe partial class ConCommand
     {
         public partial struct __Internal
         {
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp.dll", EntryPoint = "RegServerCommand", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "RegServerCommand", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void RegServerCommand([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string command);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp.dll", EntryPoint = "RegClientCommand", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "RegClientCommand", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void RegClientCommand([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string command);
         }
 
