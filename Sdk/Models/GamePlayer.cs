@@ -5,7 +5,10 @@ using System.Text.Json;
 
 namespace SourceSharp.Sdk.Models;
 
-// TODO IPlayerInfo, IsAlive
+// TODO IPlayerInfo, INetChannel
+// TODO CanTarget, IsAlive, IsObserver, IsTimingOut, GetInfo, GetTeam, ChangeTeam
+// TODO AbsOrigin, AbsAngles ...
+// TODO ExecuteCommand, ExecuteFakeCommand, ExecuteFakeCommandKeyValues
 
 public abstract class GamePlayer
 {

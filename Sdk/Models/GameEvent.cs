@@ -2,6 +2,8 @@
 
 namespace SourceSharp.Sdk.Models;
 
+// TODO CreateNew, Fire, FireToPlayers, Cancel
+
 public abstract class GameEvent
 {
     /// <summary>

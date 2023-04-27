@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Core.Test": {
+      "commandName": "Project",
+      "commandLineArgs": "-testCommannLine 123"
+    }
+  }
+}
