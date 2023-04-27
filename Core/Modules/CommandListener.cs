@@ -1,47 +1,43 @@
 ﻿using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
-using SourceSharp.Core.Structs;
-using SourceSharp.Core.Utils;
 using SourceSharp.Sdk;
 using SourceSharp.Sdk.Attributes;
 using SourceSharp.Sdk.Enums;
 using SourceSharp.Sdk.Interfaces;
 using SourceSharp.Sdk.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace SourceSharp.Core.Modules;
 
 internal sealed class CommandListener : ICommandListener
 {
-    private abstract class ConsoleCommandEvent<T> where T : Delegate
+    private readonly struct ConsoleCommandInfo
     {
-        public ConsoleCommandInfo Command { get; }
-        public CPlugin Plugin { get; }
-        public T Callback { get; }
+        public string Command { get; }
+        public string Description { get; }
+        public ConVarFlags Flags { get; }
+        public AdminFlags AccessFlags { get; }
 
-        protected ConsoleCommandEvent(ConsoleCommandInfo command, CPlugin plugin, MethodInfo method)
+        public ConsoleCommandInfo(string command, string description, ConVarFlags flags, AdminFlags accessFlags)
         {
             Command = command;
-            Plugin = plugin;
-            Callback = method.CreateDelegate<T>(plugin.Instance);
+            Description = description;
+            Flags = flags;
+            AccessFlags = accessFlags;
         }
     }
 
-    private class ServerConsoleEvent : ConsoleCommandEvent<Action<ConsoleCommand>>
-    {
-        public ServerConsoleEvent(ConsoleCommandInfo command, CPlugin plugin, MethodInfo method) : base(command, plugin, method) { }
-    }
+    private readonly CKeyHook<string,
+        ConsoleCommandInfo,
+        ServerConsoleCommandAttribute,
+        bool,
+        Action<ConsoleCommand>> _server;
 
-    private sealed class ClientConsoleEvent : ConsoleCommandEvent<Action<ConsoleCommand, GamePlayer?>>
-    {
-        public ClientConsoleEvent(ConsoleCommandInfo command, CPlugin plugin, MethodInfo method) : base(command, plugin, method) { }
-    }
-
-    private readonly Dictionary<string, List<ClientConsoleEvent>> _client;
-    private readonly Dictionary<string, List<ServerConsoleEvent>> _server;
+    private readonly CKeyHook<string,
+        ConsoleCommandInfo,
+        ClientConsoleCommandAttribute,
+        bool,
+        Action<ConsoleCommand, GamePlayer?>> _client;
 
     private readonly IAdminManager _adminManager;
 
@@ -60,130 +56,63 @@ internal sealed class CommandListener : ICommandListener
 
     public void Shutdown()
     {
-        _server.Clear();
-        _client.Clear();
+        _server.Shutdown();
+        _client.Shutdown();
     }
 
     public void OnPluginLoad(CPlugin plugin)
     {
-        var hooks = plugin.Instance.GetType().GetMethods()
-            .Where(m => Attribute.GetCustomAttributes(m, typeof(ConsoleCommandBase)).Any())
-            .ToList();
+        _client.ScanPlugin(plugin,
+            attr => new ConsoleCommandInfo(attr.Key, attr.Description, attr.Flags, AdminFlags.None),
+            Bridges.ConCommand.RegClientCommand);
 
-        if (!hooks.Any())
-        {
-            return;
-        }
-
-        foreach (var hook in hooks)
-        {
-            if (Attribute.GetCustomAttribute(hook, typeof(ConsoleCommandBase)) is not ConsoleCommandBase attr)
-            {
-                continue;
-            }
-
-            if (attr is ServerConsoleCommand sc)
-            {
-                hook.CheckReturnAndParameters(typeof(void), new[] { typeof(ConsoleCommand) });
-
-                if (!_server.ContainsKey(attr.Command))
-                {
-                    _server.Add(sc.Command, new());
-
-                    Bridges.ConCommand.RegServerCommand(sc.Command);
-                }
-
-                _server[sc.Command].Add(new(new ConsoleCommandInfo(sc.Command, sc.Description, sc.Flags, AdminFlags.None), plugin, hook));
-            }
-            else if (attr is ClientConsoleCommand cc)
-            {
-                hook.CheckReturnAndParameters(typeof(void), new[] { typeof(ConsoleCommand), typeof(GamePlayer) });
-
-                if (!_client.ContainsKey(attr.Command))
-                {
-                    _client.Add(cc.Command, new());
-
-                    Bridges.ConCommand.RegClientCommand(cc.Command);
-                }
-
-                _client[cc.Command].Add(new(new ConsoleCommandInfo(cc.Command, cc.Description, cc.Flags, cc.AccessFlags), plugin, hook));
-            }
-        }
+        _server.ScanPlugin(plugin,
+            attr => new ConsoleCommandInfo(attr.Key, attr.Description, attr.Flags, AdminFlags.None),
+            Bridges.ConCommand.RegServerCommand);
     }
 
     public void OnPluginUnload(CPlugin plugin)
     {
-        foreach (var (eventName, hooks) in _server.Where(x => x.Value.Any(v => v.Plugin == plugin)))
+        _client.RemovePlugin(plugin);
+        _server.RemovePlugin(plugin);
+    }
+
+    public bool OnClientConsoleCommand(ConsoleCommand command, GamePlayer? player)
+        => _client.OnCall(command.Command, false, hooks =>
         {
-            for (var i = 0; i < hooks.Count; i++)
+            // 这里与SourceMod不同
+            // SM中注册命令的权限是以第一个注册的代码为准
+            // 在SS中的实现为根据每个Attribute中的Flags
+            // 来确定能否调用对应的Action
+
+            var accessFlags = AdminFlags.None;
+
+            AdminUser? admin;
+            if (player is CGamePlayer { IsAuthorized: true } cp && (admin = _adminManager.FindAdminByIdentity(cp.SteamId)) is not null)
             {
-                if (hooks[i].Plugin.Equals(plugin))
+                accessFlags = admin.Flags;
+            }
+
+            foreach (var hook in hooks)
+            {
+                if (accessFlags.HasFlag(hook.Info.AccessFlags))
                 {
-                    hooks.RemoveAt(i);
-                    i--;
+                    hook.Callback.Invoke(command, player);
                 }
             }
 
-            if (!hooks.Any())
+            return true;
+        });
+
+    public bool OnServerConsoleCommand(ConsoleCommand command)
+        => _server.OnCall(command.Command, false, hooks =>
+        {
+            foreach (var hook in hooks)
             {
-                _server.Remove(eventName);
-                break;
+                hook.Callback.Invoke(command);
             }
-        }
-
-        foreach (var (eventName, hooks) in _client.Where(x => x.Value.Any(v => v.Plugin == plugin)))
-        {
-            for (var i = 0; i < hooks.Count; i++)
-            {
-                if (hooks[i].Plugin.Equals(plugin))
-                {
-                    hooks.RemoveAt(i);
-                    i--;
-                }
-            }
-
-            if (!hooks.Any())
-            {
-                _server.Remove(eventName);
-                break;
-            }
-        }
-    }
-
-    public void OnClientConsoleCommand(ConsoleCommand command, GamePlayer? player)
-    {
-        // 这里与SourceMod不同
-        // SM中注册命令的权限是以第一个注册的代码为准
-        // 在SS中的实现为根据每个Attribute中的Flags
-        // 来确定能否调用对应的Action
-
-        var accessFlags = AdminFlags.None;
-
-        AdminUser? admin;
-        if (player is CGamePlayer { IsAuthorized: true } cp && (admin = _adminManager.FindAdminByIdentity(cp.SteamId)) is not null)
-        {
-            accessFlags = admin.Flags;
-        }
-
-        foreach (var (_, hook) in _client.Where(x => x.Key == command.Args[0]))
-        {
-            hook.ForEach(x =>
-            {
-                if (accessFlags.HasFlag(x.Command.AccessFlags))
-                {
-                    x.Callback.Invoke(command, player);
-                }
-            });
-        }
-    }
-
-    public void OnServerConsoleCommand(ConsoleCommand command)
-    {
-        foreach (var (_, hook) in _server.Where(x => x.Key == command.Args[0]))
-        {
-            hook.ForEach(x => x.Callback.Invoke(command));
-        }
-    }
+            return true;
+        });
 
     /*
      *  IRuntime

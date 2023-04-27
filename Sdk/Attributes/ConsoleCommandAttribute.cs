@@ -3,65 +3,62 @@ using System;
 
 namespace SourceSharp.Sdk.Attributes;
 
-public abstract class ConsoleCommandBase : Attribute
+public abstract class ConsoleCommandBaseAttribute : HookBaseAttribute<string>
 {
-    public string Command { get; }
     public string Description { get; }
     public ConVarFlags Flags { get; }
+    public string Command => Key;
 
-    protected ConsoleCommandBase(string command)
+    protected ConsoleCommandBaseAttribute(string command) : base(command.ToLower())
     {
-        Command = command;
         Description = string.Empty;
         Flags = ConVarFlags.None;
     }
 
-    protected ConsoleCommandBase(string command, string description)
+    protected ConsoleCommandBaseAttribute(string command, string description) : base(command.ToLower())
     {
-        Command = command;
         Description = description;
         Flags = ConVarFlags.None;
     }
 
-    protected ConsoleCommandBase(string command, string description, ConVarFlags flags)
+    protected ConsoleCommandBaseAttribute(string command, string description, ConVarFlags flags) : base(command.ToLower())
     {
-        Command = command;
         Description = description;
         Flags = flags;
     }
 }
 
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-public sealed class ServerConsoleCommand : ConsoleCommandBase
+public sealed class ServerConsoleCommandAttribute : ConsoleCommandBaseAttribute
 {
-    public ServerConsoleCommand(string command) : base(command) { }
+    public ServerConsoleCommandAttribute(string command) : base(command) { }
 
-    public ServerConsoleCommand(string command, string description) : base(command, description) { }
+    public ServerConsoleCommandAttribute(string command, string description) : base(command, description) { }
 
-    public ServerConsoleCommand(string command, string description, ConVarFlags flags) : base(command, description, flags) { }
+    public ServerConsoleCommandAttribute(string command, string description, ConVarFlags flags) : base(command, description, flags) { }
 }
 
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-public sealed class ClientConsoleCommand : ConsoleCommandBase
+public sealed class ClientConsoleCommandAttribute : ConsoleCommandBaseAttribute
 {
     public AdminFlags AccessFlags { get; }
 
-    public ClientConsoleCommand(string command) : base(command)
+    public ClientConsoleCommandAttribute(string command) : base(command)
     {
         AccessFlags = AdminFlags.None;
     }
 
-    public ClientConsoleCommand(string command, string description) : base(command, description)
+    public ClientConsoleCommandAttribute(string command, string description) : base(command, description)
     {
         AccessFlags = AdminFlags.None;
     }
 
-    public ClientConsoleCommand(string command, string description, ConVarFlags flags) : base(command, description, flags)
+    public ClientConsoleCommandAttribute(string command, string description, ConVarFlags flags) : base(command, description, flags)
     {
         AccessFlags = AdminFlags.None;
     }
 
-    public ClientConsoleCommand(string command, string description, ConVarFlags flags, AdminFlags admin) : base(command, description, flags)
+    public ClientConsoleCommandAttribute(string command, string description, ConVarFlags flags, AdminFlags admin) : base(command, description, flags)
     {
         AccessFlags = admin;
     }

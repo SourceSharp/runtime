@@ -1,37 +1,38 @@
 ﻿using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
-using SourceSharp.Core.Utils;
 using SourceSharp.Sdk;
 using SourceSharp.Sdk.Attributes;
 using SourceSharp.Sdk.Enums;
 using SourceSharp.Sdk.Models;
 using SourceSharp.Sdk.Structs;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace SourceSharp.Core.Modules;
 
 internal sealed class GameEventListener : IGameEventListener
 {
-    private class GameEventListenerInfo : CHookCallback<Func<GameEvent, ActionResponse<bool>>>
+    private readonly struct EventListenerInfo
     {
-        public GameEventHookType HookType { get; }
-        public int Priority { get; }
+        public GameEventHookType HookType { get; } = GameEventHookType.Post;
+        public int Priority { get; } = 0;
 
-        internal GameEventListenerInfo(CPlugin plugin, GameEventHookType type, int priority, MethodInfo method) : base(plugin, method)
+        public EventListenerInfo(GameEventHookType hookType, int priority)
         {
-            HookType = type;
+            HookType = hookType;
             Priority = priority;
         }
     }
 
-    private readonly Dictionary<string, List<GameEventListenerInfo>> _listener;
+    private readonly CKeyHook<string,
+        EventListenerInfo,
+        GameEventAttribute,
+        bool,
+        Func<GameEvent, ActionResponse<bool>>> _hooks;
 
     public GameEventListener()
     {
-        _listener = new();
+        _hooks = new();
     }
 
     public void Initialize()
@@ -41,100 +42,52 @@ internal sealed class GameEventListener : IGameEventListener
 
     public void Shutdown()
     {
-        _listener.Clear();
+        _hooks.Shutdown();
     }
 
     public void OnPluginLoad(CPlugin plugin)
     {
-        var hooks = plugin.Instance.GetType().GetMethods()
-            .Where(m => Attribute.GetCustomAttributes(m, typeof(GameEventAttribute)).Any())
-            .ToList();
-
-        if (!hooks.Any())
-        {
-            return;
-        }
-
-        foreach (var hook in hooks)
-        {
-            if (Attribute.GetCustomAttribute(hook, typeof(GameEventAttribute)) is not GameEventAttribute ev)
-            {
-                continue;
-            }
-
-            hook.CheckReturnAndParameters(typeof(void), new[] { typeof(GameEvent) });
-
-            if (!_listener.ContainsKey(ev.Name))
-            {
-                _listener.Add(ev.Name, new());
-
-                Bridges.Event.RegGameEventHook(ev.Name);
-            }
-
-            _listener[ev.Name].Add(new(plugin, ev.Type, ev.Priority, hook));
-        }
+        _hooks.ScanPlugin(plugin,
+            attribute => new(attribute.Type, attribute.Priority),
+            s => Bridges.Event.RegGameEventHook(s));
     }
 
     public void OnPluginUnload(CPlugin plugin)
-    {
-        foreach (var (eventName, hooks) in _listener.Where(x => x.Value.Any(v => v.Plugin == plugin)))
+        => _hooks.RemovePlugin(plugin);
+
+    public bool OnEventFire(CGameEvent @event)
+        => _hooks.OnCall(@event.Name, false, hooks =>
         {
-            for (var i = 0; i < hooks.Count; i++)
+            var code = 0;
+            var block = false;
+
+            foreach (var listener in hooks
+                         .Where(x => x.Info.HookType is GameEventHookType.Pre)
+                         .OrderByDescending(x => x.Info.Priority))
             {
-                if (hooks[i].Plugin.Equals(plugin))
+                var response = listener.Callback.Invoke(@event);
+                if (response.Code > code)
                 {
-                    hooks.RemoveAt(i);
-                    i--;
+                    code = response.Code;
+                    block = response.Response;
                 }
             }
 
-            if (!hooks.Any())
-            {
-                _listener.Remove(eventName);
-                break;
-            }
-        }
-    }
-
-    public bool OnEventFire(CGameEvent @event)
-    {
-        if (!_listener.TryGetValue(@event.Name, out var listeners))
-        {
-            return false;
-        }
-
-        var code = 0;
-        var block = false;
-
-        foreach (var listener in listeners
-                     .Where(x => x.HookType is GameEventHookType.Pre)
-                     .OrderByDescending(x => x.Priority))
-        {
-            var response = listener.Callback.Invoke(@event);
-            if (response.Code > code)
-            {
-                code = response.Code;
-                block = response.Response;
-            }
-        }
-
-        return block;
-    }
+            return block;
+        });
 
     public void OnEventFired(CGameEvent @event)
-    {
-        if (!_listener.TryGetValue(@event.Name, out var listeners))
+        => _hooks.OnCall(@event.Name, false, hooks =>
         {
-            return;
-        }
+            foreach (var listener in hooks
+                         .Where(x => x.Info.HookType is GameEventHookType.Post)
+                         .OrderByDescending(x => x.Info.Priority))
+            {
+                listener.Callback.Invoke(@event);
+            }
 
-        foreach (var listener in listeners
-                     .Where(x => x.HookType is GameEventHookType.Post)
-                     .OrderByDescending(x => x.Priority))
-        {
-            listener.Callback.Invoke(@event);
-        }
-    }
+            return true;
+        });
 
     /*
      *  IRuntime

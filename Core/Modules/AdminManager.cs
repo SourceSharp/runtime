@@ -1,5 +1,4 @@
-﻿using SourceSharp.Core.Interfaces;
-using SourceSharp.Core.Models;
+﻿using SourceSharp.Core.Models;
 using SourceSharp.Sdk;
 using SourceSharp.Sdk.Interfaces;
 using SourceSharp.Sdk.Models;
@@ -11,15 +10,11 @@ namespace SourceSharp.Core.Modules;
 
 internal sealed class AdminManager : IAdminManager
 {
-    private readonly ISourceSharpBase _sourceSharp;
-
     private readonly List<CAdmin> _admins;
     private uint _serialNumber;
 
-    public AdminManager(ISourceSharpBase sourceSharp)
+    public AdminManager()
     {
-        _sourceSharp = sourceSharp;
-
         _admins = new();
         _serialNumber = 0;
     }

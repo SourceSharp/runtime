@@ -59,5 +59,6 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Bridges\" />
+      <Folder Include="Structs\" />
     </ItemGroup>
 </Project>

@@ -360,6 +360,9 @@ namespace SourceSharp.Core.Bridges
 
             [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "FindConVar", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr FindConVar([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pName);
+
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "RegisterConVarHook", CallingConvention = __CallingConvention.Cdecl)]
+            internal static extern void RegisterConVarHook([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pName);
         }
 
         public static global::SourceSharp.Core.Bridges.IConVar CreateConVar(string pName, string pDefValue, string pDescription, int nFlags, bool bHasMin, float flMin, bool bHasMax, float flMax)
@@ -374,6 +377,11 @@ namespace SourceSharp.Core.Bridges
             var ___ret = __Internal.FindConVar(pName);
             var __result0 = global::SourceSharp.Core.Bridges.IConVar.__GetOrCreateInstance(___ret, false);
             return __result0;
+        }
+
+        public static void RegisterConVarHook(string pName)
+        {
+            __Internal.RegisterConVarHook(pName);
         }
     }
 }

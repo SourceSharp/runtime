@@ -28,12 +28,9 @@ internal sealed class PlayerListener : IPlayerListener
 
     private readonly List<PlayerEvent> _events;
     private readonly List<PlayerHook> _hooks;
-    private readonly ISourceSharpBase _sourceSharp;
 
-    public PlayerListener(ISourceSharpBase sourceSharp)
+    public PlayerListener()
     {
-        _sourceSharp = sourceSharp;
-
         _events = new();
         _hooks = new();
     }

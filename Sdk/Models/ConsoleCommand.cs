@@ -6,6 +6,8 @@ public sealed class ConsoleCommand
     public string ArgString { get; }
     public int ArgC { get; }
 
+    public string Command => Args[0].ToLower();
+
     public ConsoleCommand(string argString, string[] args, int argC)
     {
         ArgString = argString;

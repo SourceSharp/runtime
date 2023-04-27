@@ -1,7 +1,6 @@
 ﻿using SourceSharp.Core.Bridges;
 using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
-using SourceSharp.Core.Utils;
 using SourceSharp.Sdk;
 using SourceSharp.Sdk.Attributes;
 using SourceSharp.Sdk.Enums;
@@ -16,6 +15,12 @@ namespace SourceSharp.Core.Modules;
 
 internal class ConVarManager : IConVarManager
 {
+    private readonly struct ConVarHookInfo
+    {
+        public CConVar ConVar { get; }
+        public ConVarHookInfo(CConVar cvar) => ConVar = cvar;
+    }
+
     private sealed class ConVarHook : CHookCallback<Action<ConVar, string, string>>
     {
         public CConVar ConVar { get; }
@@ -26,7 +31,12 @@ internal class ConVarManager : IConVarManager
         }
     }
 
-    private readonly Dictionary<string, List<ConVarHook>> _hooks;
+    private readonly CKeyHook<string,
+        ConVarHookInfo,
+        ConVarChangedAttribute,
+        bool,
+        Action<ConVar, string, string>> _hooks;
+
     private readonly List<CConVar> _conVars;
 
     private readonly ISourceSharpBase _sourceSharp;
@@ -35,8 +45,8 @@ internal class ConVarManager : IConVarManager
     {
         _sourceSharp = sourceSharp;
 
-        _hooks = new();
         _conVars = new();
+        _hooks = new();
     }
 
     public void Initialize()
@@ -47,7 +57,7 @@ internal class ConVarManager : IConVarManager
     public void Shutdown()
     {
         _conVars.Clear();
-        _hooks.Clear();
+        _hooks.Shutdown();
     }
 
     public void OnPluginLoad(CPlugin plugin)
@@ -57,38 +67,18 @@ internal class ConVarManager : IConVarManager
     }
 
     public void OnPluginUnload(CPlugin plugin)
-    {
-        foreach (var (conVarName, hooks) in _hooks.Where(x => x.Value.Any(v => v.Plugin == plugin)))
-        {
-            for (var i = 0; i < hooks.Count; i++)
-            {
-                if (hooks[i].Plugin.Equals(plugin))
-                {
-                    hooks.RemoveAt(i);
-                    i--;
-                }
-            }
-
-            if (!hooks.Any())
-            {
-                _hooks.Remove(conVarName);
-                break;
-            }
-        }
-    }
+        => _hooks.RemovePlugin(plugin);
 
     public void OnConVarChanged(IConVar conVar, string oldValue, string newValue)
-    {
-        if (!_hooks.TryGetValue(conVar.Name, out var hooks))
+        => _hooks.OnCall(conVar.Name, false, hooks =>
         {
-            return;
-        }
+            foreach (var hook in hooks)
+            {
+                hook.Callback.Invoke(hook.Info.ConVar, oldValue, newValue);
+            }
 
-        foreach (var hook in hooks)
-        {
-            hook.Callback.Invoke(hook.ConVar, oldValue, newValue);
-        }
-    }
+            return true;
+        });
 
     private void RegConVars(CPlugin plugin)
     {
@@ -126,49 +116,24 @@ internal class ConVarManager : IConVarManager
     }
 
     private void HookConVars(CPlugin plugin)
-    {
-        var hooks = plugin.Instance.GetType().GetMethods()
-            .Where(m => Attribute.GetCustomAttributes(m, typeof(ConVarChangedAttribute)).Any())
-            .ToList();
-
-        if (!hooks.Any())
-        {
-            return;
-        }
-
-        foreach (var hook in hooks)
-        {
-            if (Attribute.GetCustomAttribute(hook, typeof(ConVarChangedAttribute)) is not ConVarChangedAttribute cvar)
+        => _hooks.ScanPlugin(plugin,
+            attr =>
             {
-                continue;
-            }
-
-            hook.CheckReturnAndParameters(typeof(void), new[] { typeof(ConVar), typeof(string), typeof(string) });
-
-            var conVar = _conVars.Find(x => x.Name == cvar.Name);
-            if (conVar is null)
-            {
-                // lookup game ConVar
-                var iCvar = ConVarBridge.FindConVar(cvar.Name);
-                if (iCvar is null)
+                var conVar = _conVars.Find(x => x.Name == attr.Name);
+                if (conVar is null)
                 {
-                    _sourceSharp.LogError($"Failed to find ConVar: {cvar.Name}");
-                    plugin.UpdateStatus(PluginStatus.Error);
-                    return;
+                    // lookup game ConVar
+                    var iCvar = ConVarBridge.FindConVar(attr.Name) ??
+                                throw new InvalidOperationException(
+                                    $"Failed to find ConVar: [{attr.Name}], make sure ConVar does exists.");
+
+                    conVar = new CConVar(iCvar, iCvar.Name, iCvar.Description);
+                    _conVars.Add(conVar);
                 }
 
-                conVar = new CConVar(iCvar, iCvar.Name, iCvar.Description);
-                _conVars.Add(conVar);
-            }
-
-            if (!_hooks.ContainsKey(cvar.Name))
-            {
-                _hooks.Add(cvar.Name, new());
-            }
-
-            _hooks[cvar.Name].Add(new(plugin, conVar, hook));
-        }
-    }
+                return new ConVarHookInfo(conVar);
+            },
+            ConVarBridge.RegisterConVarHook);
 
     /*
      *  IRuntime
