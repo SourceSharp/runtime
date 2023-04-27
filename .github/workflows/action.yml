@@ -1,0 +1,51 @@
+name: Master - Push
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    name: Build on ${{ matrix.os_short }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-20.04
+          - windows-latest
+        include:
+          - os: ubuntu-20.04
+            os_short: linux
+            target: linux-x64
+          - os: windows-latest
+            os_short: windows
+            target: win-x64
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 9999
+
+    - name: Setup
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Nuget
+      run: dotnet restore
+
+    - name: Build
+      shell: bash
+      run: |
+        COMMIT_VERSION=$(git rev-list --count HEAD)
+        dotnet build PluginExample/PluginExample.csproj -f net7.0 -r ${{ matrix.target }} --no-self-contained -c Release
+        dotnet publish Core/Core.csproj -f net7.0 -r ${{ matrix.target }} --no-self-contained -c Release --output ./.deploy -p:VersionSuffix=$COMMIT_VERSION
+
+    - name: Publish
+      uses: actions/upload-artifact@v3
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+      with:
+        name: Build-${{ matrix.os_short }}
+        path: .deploy
