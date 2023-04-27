@@ -35,6 +35,15 @@ namespace SourceSharp.Core.Bridges
 
             [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "GetEngineVersion", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern int GetEngineVersion();
+
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "ExecuteServerCommand", CallingConvention = __CallingConvention.Cdecl)]
+            internal static extern void ExecuteServerCommand([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pCommand);
+
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "InsertServerCommand", CallingConvention = __CallingConvention.Cdecl)]
+            internal static extern void InsertServerCommand([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pCommand);
+
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "ServerExecute", CallingConvention = __CallingConvention.Cdecl)]
+            internal static extern void ServerExecute();
         }
 
         public static string GetGamePath()
@@ -69,6 +78,21 @@ namespace SourceSharp.Core.Bridges
         {
             var ___ret = __Internal.GetEngineVersion();
             return ___ret;
+        }
+
+        public static void ExecuteServerCommand(string pCommand)
+        {
+            __Internal.ExecuteServerCommand(pCommand);
+        }
+
+        public static void InsertServerCommand(string pCommand)
+        {
+            __Internal.InsertServerCommand(pCommand);
+        }
+
+        public static void ServerExecute()
+        {
+            __Internal.ServerExecute();
         }
     }
 }

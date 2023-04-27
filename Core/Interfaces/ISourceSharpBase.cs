@@ -113,6 +113,15 @@ internal abstract class SourceSharpBase : ISourceSharpBase
     public GameEngineVersion GetEngineVersion()
         => (GameEngineVersion)CoreBridge.GetEngineVersion();
 
+    public void ExecuteServerCommand(string command)
+        => CoreBridge.ExecuteServerCommand(command);
+
+    public void InsertServerCommand(string command)
+        => CoreBridge.InsertServerCommand(command);
+
+    public void ServerExecute()
+        => CoreBridge.ServerExecute();
+
     /*
      * ISourceSharpBase
      */

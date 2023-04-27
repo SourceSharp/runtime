@@ -74,4 +74,20 @@ public interface ISourceSharp : IRuntime
     /// </summary>
     /// <returns>EngineVersion</returns>
     GameEngineVersion GetEngineVersion();
+
+    /// <summary>
+    /// 执行服务端命令
+    /// </summary>
+    void ExecuteServerCommand(string command);
+
+    /// <summary>
+    /// 添加命令到服务器命令缓冲池
+    /// </summary>
+    /// <param name="command"></param>
+    void InsertServerCommand(string command);
+
+    /// <summary>
+    /// 执行并清理服务器命令缓冲池
+    /// </summary>
+    void ServerExecute();
 }
