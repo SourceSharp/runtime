@@ -1,3 +1,2 @@
-# runtime
-.NET runtime for SourceSharp script engine
-你好
+# SourceSharp - Runtime
+Runtime for SourceSharp script engine.  
