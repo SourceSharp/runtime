@@ -1,6 +1,6 @@
 ﻿namespace SourceSharp.Sdk.Structs;
 
-public struct ActionResponse<T>
+public readonly struct ActionResponse<T>
 {
     public T Response { get; }
 

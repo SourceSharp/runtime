@@ -1,10 +1,13 @@
-﻿using SourceSharp.Sdk.Attributes;
+﻿using SourceSharp.Sdk;
+using SourceSharp.Sdk.Attributes;
 using SourceSharp.Sdk.Enums;
 using SourceSharp.Sdk.Interfaces;
 using SourceSharp.Sdk.Models;
 using System.Reflection;
 
 namespace SourceSharp.Example;
+
+#pragma warning disable IDE0051, IDE0052, IDE0060, IDE1006
 
 public interface IExportInterface : IRuntime
 {
@@ -14,6 +17,15 @@ public interface IExportInterface : IRuntime
 [Plugin(Name = "Example", Author = "SourceSharp Team", Version = "1.0")]
 public class Example : PluginBase, IExportInterface
 {
+    [ConVar("ss_plugin_example", "0")]
+    public ConVar ss_plugin_example { get; } = null!;
+
+    [ConVar("test_convar", "1",
+        Description = "测试",
+        Flags = ConVarFlags.Notify | ConVarFlags.Replicated,
+        HasMin = true, Min = 0f, HasMax = true, Max = 999f)]
+    public ConVar test_convar { get; } = null!;
+
     public override bool OnLoad()
     {
         _sourceSharp.LogMessage("plugin loaded");
@@ -50,10 +62,15 @@ public class Example : PluginBase, IExportInterface
     private void OnPlayerConnected(GamePlayer player)
         => _sourceSharp.LogMessage("player connected -> name: " + player.Name);
 
+    [ConVarChanged("sv_cheats")]
+    [ConVarChanged("mp_allow_bot")]
+    public void OnConVarChanged(ConVar conVar, string oldValue, string newValue)
+        => _sourceSharp.LogMessage($"ConVarChanged -> {conVar.Name} = {newValue} (old: {oldValue})");
+
     /*
      * Export
      */
     public void TestExport() => _sourceSharp.LogMessage("Test Export");
-    public string GetInterfaceName() => "ISOURCESHARP_" + Assembly.GetExecutingAssembly()!.GetName().Name!.ToUpper();
+    public string GetInterfaceName() => SharedDefines.InterfacePrefix + Assembly.GetExecutingAssembly()!.GetName().Name!.ToUpper();
     public uint GetInterfaceVersion() => (uint)Assembly.GetExecutingAssembly()!.GetName()!.Version!.Major;
 }

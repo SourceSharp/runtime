@@ -1,4 +1,4 @@
-#include <Event.h>
+#include <ConVar.h>
 #include <new>
 
-class IGameEvent& (IGameEvent::*_0)(class IGameEvent&&) = &IGameEvent::operator=;
+class IConVar& (IConVar::*_0)(class IConVar&&) = &IConVar::operator=;

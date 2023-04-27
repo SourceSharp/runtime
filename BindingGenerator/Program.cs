@@ -5,6 +5,7 @@ foreach (var module in new string [] {
     "SourceSharp",
     "ConCommand",
     "Event",
+    "ConVar",
 })
 {
     ConsoleDriver.Run(new CoreLibrary(module));

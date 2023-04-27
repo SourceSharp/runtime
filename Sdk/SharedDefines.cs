@@ -2,6 +2,8 @@
 
 public static class SharedDefines
 {
+    public const string InterfacePrefix = "ISOURCESHARP_";
+
     public const string CoreInterfaceName = "ISOURCESHARP_CORE";
     public const string GameEventListenerInterfaceName = "ISOURCESHARP_GAMEEVENTLISTENER";
 
@@ -18,4 +20,7 @@ public static class SharedDefines
 
     public const string AdminManagerInterfaceName = "ISOURCESHARP_ADMINMANAGER";
     public const uint AdminManagerInterfaceVersion = 1;
+
+    public const string ConVarManagerInterfaceName = "ISOURCESHARP_CONVARMANAGER";
+    public const uint ConVarManagerInterfaceVersion = 1;
 }

@@ -3,7 +3,7 @@
 namespace SourceSharp.Sdk.Enums;
 
 [Flags]
-public enum ConVarFlags : uint
+public enum ConVarFlags : int
 {
     /// <summary>
     /// No flags
@@ -61,7 +61,7 @@ public enum ConVarFlags : uint
     /// <summary>
     /// notifies players when changed
     /// </summary>
-    NOtify = (1 << 8),
+    Notify = (1 << 8),
 
     /// <summary>
     /// changes the client's info string

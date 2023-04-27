@@ -1,6 +1,5 @@
 ﻿using McMaster.NETCore.Plugins;
 using Microsoft.Extensions.DependencyInjection;
-using SourceSharp.Core.Configurations;
 using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
 using SourceSharp.Core.Utils;
@@ -16,7 +15,6 @@ namespace SourceSharp.Core;
 
 internal sealed class PluginManager : IPluginManager
 {
-    private readonly CoreConfig _config;
     private readonly IServiceProvider _services;
     private readonly ISourceSharpBase _sourceSharp;
     private readonly IShareSystemBase _shareSystem;
@@ -24,14 +22,8 @@ internal sealed class PluginManager : IPluginManager
     private readonly List<CPlugin> _plugins;
     private readonly List<IListenerBase> _listeners;
 
-    // IListener
-    private IGameEventListener _gameEventListener = null!;
-    private IPlayerListener _playerListener = null!;
-    private ICommandListener _commandListener = null!;
-
-    public PluginManager(CoreConfig config, ISourceSharpBase sourceSharp, IShareSystemBase shareSystem, IServiceProvider services)
+    public PluginManager(ISourceSharpBase sourceSharp, IShareSystemBase shareSystem, IServiceProvider services)
     {
-        _config = config;
         _services = services;
         _sourceSharp = sourceSharp;
         _shareSystem = shareSystem;
@@ -43,11 +35,6 @@ internal sealed class PluginManager : IPluginManager
     public void Initialize()
     {
         _listeners.AddRange(_services.GetServices<IListenerBase>());
-
-        // Prevent DI for recursion
-        _gameEventListener = _services.GetRequiredService<IGameEventListener>();
-        _playerListener = _services.GetRequiredService<IPlayerListener>();
-        _commandListener = _services.GetRequiredService<ICommandListener>();
 
         foreach (var path in Directory.GetDirectories(Path.Combine("plugins"), "*", SearchOption.TopDirectoryOnly))
         {
