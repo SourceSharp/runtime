@@ -53,15 +53,19 @@ namespace SourceSharp.Core.Bridges
             [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetString@IGameEvent@@QEAAPEBDPEBD@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr GetString(__IntPtr __instance, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pKey);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetBroadcast@IGameEvent@@QEAA_NXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetBroadcast@IGameEvent@@QEAA_N_N@Z", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
-            internal static extern bool GetBroadcast(__IntPtr __instance);
+            internal static extern bool SetBroadcast(__IntPtr __instance, bool value);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetBroadcast@IGameEvent@@QEAAX_N@Z", CallingConvention = __CallingConvention.Cdecl)]
-            internal static extern void SetBroadcast(__IntPtr __instance, bool value);
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?Cancel@IGameEvent@@QEAAXXZ", CallingConvention = __CallingConvention.Cdecl)]
+            internal static extern void Cancel(__IntPtr __instance);
 
             [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetName@IGameEvent@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr GetName(__IntPtr __instance);
+
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetBroadcast@IGameEvent@@QEAA_NXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool GetBroadcast(__IntPtr __instance);
         }
 
         public __IntPtr __Instance { get; protected set; }
@@ -208,6 +212,26 @@ namespace SourceSharp.Core.Bridges
             return CppSharp.Runtime.MarshalUtil.GetString(global::System.Text.Encoding.UTF8, ___ret);
         }
 
+        public bool SetBroadcast(bool value)
+        {
+            var ___ret = __Internal.SetBroadcast(__Instance, value);
+            return ___ret;
+        }
+
+        public void Cancel()
+        {
+            __Internal.Cancel(__Instance);
+        }
+
+        public string Name
+        {
+            get
+            {
+                var ___ret = __Internal.GetName(__Instance);
+                return CppSharp.Runtime.MarshalUtil.GetString(global::System.Text.Encoding.UTF8, ___ret);
+            }
+        }
+
         public bool Broadcast
         {
             get
@@ -221,15 +245,6 @@ namespace SourceSharp.Core.Bridges
                 __Internal.SetBroadcast(__Instance, value);
             }
         }
-
-        public string Name
-        {
-            get
-            {
-                var ___ret = __Internal.GetName(__Instance);
-                return CppSharp.Runtime.MarshalUtil.GetString(global::System.Text.Encoding.UTF8, ___ret);
-            }
-        }
     }
 
     public unsafe partial class Event
@@ -239,12 +254,22 @@ namespace SourceSharp.Core.Bridges
             [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "RegGameEventHook", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool RegGameEventHook([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pName);
+
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "CreateGameEvent", CallingConvention = __CallingConvention.Cdecl)]
+            internal static extern __IntPtr CreateGameEvent([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pName, bool bBroadcast);
         }
 
         public static bool RegGameEventHook(string pName)
         {
             var ___ret = __Internal.RegGameEventHook(pName);
             return ___ret;
+        }
+
+        public static global::SourceSharp.Core.Bridges.IGameEvent CreateGameEvent(string pName, bool bBroadcast)
+        {
+            var ___ret = __Internal.CreateGameEvent(pName, bBroadcast);
+            var __result0 = global::SourceSharp.Core.Bridges.IGameEvent.__GetOrCreateInstance(___ret, false);
+            return __result0;
         }
     }
 }

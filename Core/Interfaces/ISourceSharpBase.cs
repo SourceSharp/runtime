@@ -1,11 +1,15 @@
-﻿using SourceSharp.Sdk;
+﻿using SourceSharp.Core.Models;
+using SourceSharp.Sdk;
 using SourceSharp.Sdk.Enums;
 using SourceSharp.Sdk.Interfaces;
+using SourceSharp.Sdk.Models;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using ConVarBridge = SourceSharp.Core.Bridges.ConVar;
 using CoreBridge = SourceSharp.Core.Bridges.SourceSharp;
+using EventBridge = SourceSharp.Core.Bridges.Event;
 
 namespace SourceSharp.Core.Interfaces;
 
@@ -121,6 +125,18 @@ internal abstract class SourceSharpBase : ISourceSharpBase
 
     public void ServerExecute()
         => CoreBridge.ServerExecute();
+
+    public ConVar FindConVar(string name)
+    {
+        var iCvar = ConVarBridge.FindConVar(name);
+        return new CConVar(iCvar, iCvar.Name, iCvar.Description);
+    }
+
+    public GameEvent CreateEvent(string name, bool broadcast)
+    {
+        var ev = EventBridge.CreateGameEvent(name, broadcast);
+        return new CGameEvent(ev, false);
+    }
 
     /*
      * ISourceSharpBase

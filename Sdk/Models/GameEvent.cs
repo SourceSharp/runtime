@@ -30,7 +30,12 @@ public abstract class GameEvent
     /// <returns>True = 成功</returns>
     public abstract bool Set<T>(string key, T value) where T : IConvertible;
 
+    /// <summary>
+    /// Free Event
+    /// </summary>
+    public abstract void Cancel();
+
     protected abstract string GetName();
-    protected abstract void SetBroadcast(bool broadcast);
+    protected abstract bool SetBroadcast(bool broadcast);
     protected abstract bool GetBroadcast();
 }

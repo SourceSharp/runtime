@@ -85,14 +85,21 @@ internal class CGameEvent : GameEvent
         return retV;
     }
 
+    public override void Cancel() => _event.Cancel();
+
     protected override string GetName() => _eventName;
     protected override bool GetBroadcast() => _broadcast;
-    protected override void SetBroadcast(bool broadcast)
+    protected override bool SetBroadcast(bool broadcast)
     {
         CheckEditable();
 
-        _broadcast = broadcast;
-        _event.Broadcast = broadcast;
+        var ret = _event.SetBroadcast(broadcast);
+        if (ret)
+        {
+            _broadcast = broadcast;
+        }
+
+        return ret;
     }
 
     private void CheckEditable()

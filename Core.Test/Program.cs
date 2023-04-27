@@ -5,7 +5,7 @@ namespace SourceSharp.Core.Test;
 
 internal static class Program
 {
-    static async Task Main(string[] args)
+    static async Task Main()
     {
         Bootstrap.InitializeTest();
         await Task.Delay(TimeSpan.FromDays(1));

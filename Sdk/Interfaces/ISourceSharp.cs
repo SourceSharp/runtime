@@ -1,4 +1,5 @@
 ﻿using SourceSharp.Sdk.Enums;
+using SourceSharp.Sdk.Models;
 using System;
 
 namespace SourceSharp.Sdk.Interfaces;
@@ -90,4 +91,21 @@ public interface ISourceSharp : IRuntime
     /// 执行并清理服务器命令缓冲池
     /// </summary>
     void ServerExecute();
+
+    /// <summary>
+    /// 查找ConVar
+    /// </summary>
+    /// <param name="name">ConVar名</param>
+    /// <returns>ConVar实例</returns>
+    ConVar FindConVar(string name);
+
+    /// <summary>
+    /// 创建游戏事件.
+    /// 该事件如果没有调用Fire,
+    /// 则必须要使用Cancel进行关闭.
+    /// </summary>
+    /// <param name="name">事件名</param>
+    /// <param name="broadcast">设置默认发送值</param>
+    /// <returns>GameEvent实例</returns>
+    GameEvent CreateEvent(string name, bool broadcast);
 }
