@@ -18,42 +18,56 @@ public static class Bootstrap
     private static readonly CancellationTokenSource CancellationTokenSource = new();
 
     [UnmanagedCallersOnly]
-    public static void InitializeSourceSharp()
-        => Initialize();
+    public static int InitializeSourceSharp() => Initialize();
 
     [UnmanagedCallersOnly]
     public static void ShutdownSourceSharp() => CancellationTokenSource.Cancel(false);
 
-    public static void InitializeTest() => Initialize();
+    public static int InitializeTest() => Initialize();
 
-    private static void Initialize()
+    private static int Initialize()
     {
-        // bin
-        var dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!;
-        // root
-        var parent = Directory.GetParent(dir)!.Name;
-        // config
-        var path = Path.Combine(parent, "configs", "core.json");
+        try
+        {
+            // bin
+            var dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!;
+            // root
+            var parent = Directory.GetParent(dir)!.Name;
+            // config
+            var path = Path.Combine(parent, "configs", "core.json");
 
 #if DEBUG
-        if (!File.Exists(path))
-        {
-            path = Path.Combine(dir, "config.json");
-        }
+            if (!File.Exists(path))
+            {
+                path = Path.Combine(dir, "config.json");
+            }
 #endif
 
-        var services = new ServiceCollection();
-        var configuration = new ConfigurationBuilder().AddJsonFile(path).Build();
+            var services = new ServiceCollection();
+            var configuration = new ConfigurationBuilder().AddJsonFile(path).Build();
 
-        ConfigureServices(services, configuration);
+            ConfigureServices(services, configuration);
 
-        var serviceProvider = services.BuildServiceProvider(options: new ServiceProviderOptions
+            var serviceProvider = services.BuildServiceProvider(options: new()
+            {
+                ValidateOnBuild = true,
+                ValidateScopes = true
+            });
+
+            Boot(serviceProvider);
+
+            return 0;
+        }
+        catch (Exception ex)
         {
-            ValidateOnBuild = true,
-            ValidateScopes = true
-        });
-
-        Boot(serviceProvider);
+            var color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"{DateTime.Now:yyyy/MM/dd HH:mm:ss} [SourceSharp]  Failed to init SourceSharp.");
+            Console.ForegroundColor = color;
+            Console.WriteLine(ex.ToString());
+            Console.WriteLine(Environment.NewLine);
+            return 1;
+        }
     }
 
     private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
@@ -75,7 +89,6 @@ public static class Bootstrap
 
     private static void Boot(IServiceProvider services)
     {
-
         // Init IModuleBase
         foreach (var module in services.GetAllServices<IModuleBase>())
         {
@@ -84,13 +97,11 @@ public static class Bootstrap
 
         // Plugin Manager should be the LAST!
         services.GetRequiredService<IPluginManager>().Initialize();
+
+        // export caller invoker
         Invoker.Initialize(services);
 
         Task.Run(async () => await SignalThread(services));
-
-#if DEBUG
-        Console.WriteLine("Boot!");
-#endif
     }
 
     private static async Task SignalThread(IServiceProvider services)
