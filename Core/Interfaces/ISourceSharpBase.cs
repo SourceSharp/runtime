@@ -48,7 +48,7 @@ internal abstract class SourceSharpBase : ISourceSharpBase
         {
             case PathType.SourceSharpAbsolute:
                 {
-                    var ssDir = GetSourceSharpPath();
+                    var ssDir = GetRootPath();
                     finalPath = ssDir;
                     foreach (var p in format)
                     {
@@ -90,7 +90,7 @@ internal abstract class SourceSharpBase : ISourceSharpBase
     public string GetGamePath()
         => CoreBridge.GetGamePath();
 
-    public string GetSourceSharpPath()
+    public string GetRootPath()
         => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
 
     public void LogError(string message)

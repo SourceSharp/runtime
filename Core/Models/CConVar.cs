@@ -10,11 +10,11 @@ namespace SourceSharp.Core.Models;
 
 internal class CConVar : ConVar
 {
-    private readonly IConVar _conVar;
+    private readonly SSConVar _conVar;
     private readonly string _name;
     private readonly string _description;
 
-    public CConVar(IConVar conVar, string name, string description)
+    public CConVar(SSConVar conVar, string name, string description)
     {
         _conVar = conVar;
         _name = name;

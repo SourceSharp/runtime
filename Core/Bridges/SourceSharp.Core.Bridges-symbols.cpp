@@ -1,4 +1,4 @@
 #include <ConVar.h>
 #include <new>
 
-class IConVar& (IConVar::*_0)(class IConVar&&) = &IConVar::operator=;
+class SSConVar& (SSConVar::*_0)(class SSConVar&&) = &SSConVar::operator=;

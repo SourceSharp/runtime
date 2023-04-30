@@ -125,14 +125,14 @@ internal static class Invoker
     [UnmanagedCallersOnly]
     public static int OnFireEvent([DNNE.C99Type("const void*")] IntPtr pEvent)
     {
-        var @event = IGameEvent.__CreateInstance(pEvent);
+        var @event = SSGameEvent.__CreateInstance(pEvent);
         return _gameEventListener.OnEventFire(new CGameEvent(@event, false)) ? 1 : 0;
     }
 
     [UnmanagedCallersOnly]
     public static void OnFiredEvent([DNNE.C99Type("const void*")] IntPtr pEvent)
     {
-        var @event = IGameEvent.__CreateInstance(pEvent);
+        var @event = SSGameEvent.__CreateInstance(pEvent);
         _gameEventListener.OnEventFired(new CGameEvent(@event, true));
     }
 

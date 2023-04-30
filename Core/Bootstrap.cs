@@ -7,6 +7,7 @@ using SourceSharp.Core.Utils;
 using SourceSharp.Sdk.Interfaces;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +30,9 @@ public static class Bootstrap
     {
         try
         {
+            Console.WriteLine("SourceSharp Path: " + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            Console.WriteLine("GetGamePath: " + Bridges.SourceSharp.GetGamePath());
+
             // bin
             var dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!;
             // root

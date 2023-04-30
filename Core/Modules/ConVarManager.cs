@@ -69,7 +69,7 @@ internal class ConVarManager : IConVarManager
     public void OnPluginUnload(CPlugin plugin)
         => _hooks.RemovePlugin(plugin);
 
-    public void OnConVarChanged(IConVar conVar, string oldValue, string newValue)
+    public void OnConVarChanged(SSConVar conVar, string oldValue, string newValue)
         => _hooks.OnCall(conVar.Name, false, hooks =>
         {
             foreach (var hook in hooks)

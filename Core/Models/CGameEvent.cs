@@ -8,12 +8,12 @@ namespace SourceSharp.Core.Models;
 internal class CGameEvent : GameEvent
 {
     private readonly Dictionary<string, object> _values;
-    private readonly IGameEvent _event;
+    private readonly SSGameEvent _event;
     private readonly string _eventName;
     private readonly bool _noEdit;
     private bool _broadcast;
 
-    public CGameEvent(IGameEvent @event, bool post)
+    public CGameEvent(SSGameEvent @event, bool post)
     {
         _event = @event;
         _eventName = @event.Name;

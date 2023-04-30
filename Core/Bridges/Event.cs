@@ -14,71 +14,71 @@ using __IntPtr = global::System.IntPtr;
 
 namespace SourceSharp.Core.Bridges
 {
-    public unsafe partial class IGameEvent : IDisposable
+    public unsafe partial class SSGameEvent : IDisposable
     {
         [StructLayout(LayoutKind.Sequential, Size = 8)]
         public partial struct __Internal
         {
             internal __IntPtr m_pEvent;
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "??0IGameEvent@@QEAA@AEBV0@@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "??0SSGameEvent@@QEAA@AEBV0@@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr cctor(__IntPtr __instance, __IntPtr _0);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetInt@IGameEvent@@QEAA_NPEBDH@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetInt@SSGameEvent@@QEAA_NPEBDH@Z", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool SetInt(__IntPtr __instance, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pKey, int value);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetInt@IGameEvent@@QEAAHPEBD@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetInt@SSGameEvent@@QEAAHPEBD@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern int GetInt(__IntPtr __instance, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pKey);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetBool@IGameEvent@@QEAA_NPEBD_N@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetBool@SSGameEvent@@QEAA_NPEBD_N@Z", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool SetBool(__IntPtr __instance, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pKey, bool value);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetBool@IGameEvent@@QEAA_NPEBD@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetBool@SSGameEvent@@QEAA_NPEBD@Z", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool GetBool(__IntPtr __instance, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pKey);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetFloat@IGameEvent@@QEAA_NPEBDM@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetFloat@SSGameEvent@@QEAA_NPEBDM@Z", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool SetFloat(__IntPtr __instance, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pKey, float value);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetFloat@IGameEvent@@QEAAMPEBD@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetFloat@SSGameEvent@@QEAAMPEBD@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern float GetFloat(__IntPtr __instance, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pKey);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetString@IGameEvent@@QEAA_NPEBD0@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetString@SSGameEvent@@QEAA_NPEBD0@Z", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool SetString(__IntPtr __instance, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pKey, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string value);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetString@IGameEvent@@QEAAPEBDPEBD@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetString@SSGameEvent@@QEAAPEBDPEBD@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr GetString(__IntPtr __instance, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pKey);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetBroadcast@IGameEvent@@QEAA_N_N@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetBroadcast@SSGameEvent@@QEAA_N_N@Z", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool SetBroadcast(__IntPtr __instance, bool value);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?Cancel@IGameEvent@@QEAAXXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?Cancel@SSGameEvent@@QEAAXXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void Cancel(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetName@IGameEvent@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetName@SSGameEvent@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr GetName(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetBroadcast@IGameEvent@@QEAA_NXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetBroadcast@SSGameEvent@@QEAA_NXZ", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool GetBroadcast(__IntPtr __instance);
         }
 
         public __IntPtr __Instance { get; protected set; }
 
-        internal static readonly new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::SourceSharp.Core.Bridges.IGameEvent> NativeToManagedMap =
-            new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::SourceSharp.Core.Bridges.IGameEvent>();
+        internal static readonly new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::SourceSharp.Core.Bridges.SSGameEvent> NativeToManagedMap =
+            new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::SourceSharp.Core.Bridges.SSGameEvent>();
 
-        internal static void __RecordNativeToManagedMapping(IntPtr native, global::SourceSharp.Core.Bridges.IGameEvent managed)
+        internal static void __RecordNativeToManagedMapping(IntPtr native, global::SourceSharp.Core.Bridges.SSGameEvent managed)
         {
             NativeToManagedMap[native] = managed;
         }
 
-        internal static bool __TryGetNativeToManagedMapping(IntPtr native, out global::SourceSharp.Core.Bridges.IGameEvent managed)
+        internal static bool __TryGetNativeToManagedMapping(IntPtr native, out global::SourceSharp.Core.Bridges.SSGameEvent managed)
         {
     
             return NativeToManagedMap.TryGetValue(native, out managed);
@@ -86,28 +86,28 @@ namespace SourceSharp.Core.Bridges
 
         protected bool __ownsNativeInstance;
 
-        internal static IGameEvent __CreateInstance(__IntPtr native, bool skipVTables = false)
+        internal static SSGameEvent __CreateInstance(__IntPtr native, bool skipVTables = false)
         {
             if (native == __IntPtr.Zero)
                 return null;
-            return new IGameEvent(native.ToPointer(), skipVTables);
+            return new SSGameEvent(native.ToPointer(), skipVTables);
         }
 
-        internal static IGameEvent __GetOrCreateInstance(__IntPtr native, bool saveInstance = false, bool skipVTables = false)
+        internal static SSGameEvent __GetOrCreateInstance(__IntPtr native, bool saveInstance = false, bool skipVTables = false)
         {
             if (native == __IntPtr.Zero)
                 return null;
             if (__TryGetNativeToManagedMapping(native, out var managed))
-                return (IGameEvent)managed;
+                return (SSGameEvent)managed;
             var result = __CreateInstance(native, skipVTables);
             if (saveInstance)
                 __RecordNativeToManagedMapping(native, result);
             return result;
         }
 
-        internal static IGameEvent __CreateInstance(__Internal native, bool skipVTables = false)
+        internal static SSGameEvent __CreateInstance(__Internal native, bool skipVTables = false)
         {
-            return new IGameEvent(native, skipVTables);
+            return new SSGameEvent(native, skipVTables);
         }
 
         private static void* __CopyValue(__Internal native)
@@ -117,33 +117,33 @@ namespace SourceSharp.Core.Bridges
             return ret.ToPointer();
         }
 
-        private IGameEvent(__Internal native, bool skipVTables = false)
+        private SSGameEvent(__Internal native, bool skipVTables = false)
             : this(__CopyValue(native), skipVTables)
         {
             __ownsNativeInstance = true;
             __RecordNativeToManagedMapping(__Instance, this);
         }
 
-        protected IGameEvent(void* native, bool skipVTables = false)
+        protected SSGameEvent(void* native, bool skipVTables = false)
         {
             if (native == null)
                 return;
             __Instance = new __IntPtr(native);
         }
 
-        public IGameEvent()
+        public SSGameEvent()
         {
-            __Instance = Marshal.AllocHGlobal(sizeof(global::SourceSharp.Core.Bridges.IGameEvent.__Internal));
+            __Instance = Marshal.AllocHGlobal(sizeof(global::SourceSharp.Core.Bridges.SSGameEvent.__Internal));
             __ownsNativeInstance = true;
             __RecordNativeToManagedMapping(__Instance, this);
         }
 
-        public IGameEvent(global::SourceSharp.Core.Bridges.IGameEvent _0)
+        public SSGameEvent(global::SourceSharp.Core.Bridges.SSGameEvent _0)
         {
-            __Instance = Marshal.AllocHGlobal(sizeof(global::SourceSharp.Core.Bridges.IGameEvent.__Internal));
+            __Instance = Marshal.AllocHGlobal(sizeof(global::SourceSharp.Core.Bridges.SSGameEvent.__Internal));
             __ownsNativeInstance = true;
             __RecordNativeToManagedMapping(__Instance, this);
-            *((global::SourceSharp.Core.Bridges.IGameEvent.__Internal*) __Instance) = *((global::SourceSharp.Core.Bridges.IGameEvent.__Internal*) _0.__Instance);
+            *((global::SourceSharp.Core.Bridges.SSGameEvent.__Internal*) __Instance) = *((global::SourceSharp.Core.Bridges.SSGameEvent.__Internal*) _0.__Instance);
         }
 
         public void Dispose()
@@ -265,10 +265,10 @@ namespace SourceSharp.Core.Bridges
             return ___ret;
         }
 
-        public static global::SourceSharp.Core.Bridges.IGameEvent CreateGameEvent(string pName, bool bBroadcast)
+        public static global::SourceSharp.Core.Bridges.SSGameEvent CreateGameEvent(string pName, bool bBroadcast)
         {
             var ___ret = __Internal.CreateGameEvent(pName, bBroadcast);
-            var __result0 = global::SourceSharp.Core.Bridges.IGameEvent.__GetOrCreateInstance(___ret, false);
+            var __result0 = global::SourceSharp.Core.Bridges.SSGameEvent.__GetOrCreateInstance(___ret, false);
             return __result0;
         }
     }

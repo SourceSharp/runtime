@@ -7,16 +7,17 @@ namespace SourceSharp.Sdk.Interfaces;
 public interface ISourceSharp : IRuntime
 {
     /// <summary>
-    /// 获取完整的游戏路径
+    /// 获取游戏Mod位置
+    /// e.g. csgo/insurgency
     /// </summary>
     /// <returns>Abs路径</returns>
     string GetGamePath();
 
     /// <summary>
-    /// 获取SourceSharp路径
+    /// 获取SRCDS根目录路径
     /// </summary>
     /// <returns>Abs路径</returns>
-    string GetSourceSharpPath();
+    string GetRootPath();
 
     /// <summary>
     /// Path.Combine封装, 可以快速格式化路径

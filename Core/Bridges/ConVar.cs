@@ -14,98 +14,98 @@ using __IntPtr = global::System.IntPtr;
 
 namespace SourceSharp.Core.Bridges
 {
-    public unsafe partial class IConVar : IDisposable
+    public unsafe partial class SSConVar : IDisposable
     {
         [StructLayout(LayoutKind.Sequential, Size = 8)]
         public partial struct __Internal
         {
             internal __IntPtr m_pConVar;
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "??0IConVar@@QEAA@AEBV0@@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "??0SSConVar@@QEAA@AEBV0@@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr cctor(__IntPtr __instance, __IntPtr _0);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?ReplicateToPlayers@IConVar@@QEAA_NQEBHH@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?ReplicateToPlayers@SSConVar@@QEAA_NQEBHH@Z", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool ReplicateToPlayers(__IntPtr __instance, int[] pPlayers, int nPlayers);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetName@IConVar@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetName@SSConVar@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr GetName(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetDefault@IConVar@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetDefault@SSConVar@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr GetDefault(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetDescription@IConVar@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetDescription@SSConVar@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr GetDescription(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetString@IConVar@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetString@SSConVar@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr GetString(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetString@IConVar@@QEAAXPEBD@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetString@SSConVar@@QEAAXPEBD@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void SetString(__IntPtr __instance, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pValue);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetFloat@IConVar@@QEAAMXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetFloat@SSConVar@@QEAAMXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern float GetFloat(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetFloat@IConVar@@QEAAXM@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetFloat@SSConVar@@QEAAXM@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void SetFloat(__IntPtr __instance, float value);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetInt@IConVar@@QEAAHXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetInt@SSConVar@@QEAAHXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern int GetInt(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetInt@IConVar@@QEAAXH@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetInt@SSConVar@@QEAAXH@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void SetInt(__IntPtr __instance, int value);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetBool@IConVar@@QEAA_NXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetBool@SSConVar@@QEAA_NXZ", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool GetBool(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetBool@IConVar@@QEAAX_N@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetBool@SSConVar@@QEAAX_N@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void SetBool(__IntPtr __instance, bool value);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetFlags@IConVar@@QEAAHXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetFlags@SSConVar@@QEAAHXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern int GetFlags(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetFlags@IConVar@@QEAAXH@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetFlags@SSConVar@@QEAAXH@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void SetFlags(__IntPtr __instance, int flags);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetMin@IConVar@@QEAAMXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetMin@SSConVar@@QEAAMXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern float GetMin(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetMin@IConVar@@QEAAXM@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetMin@SSConVar@@QEAAXM@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void SetMin(__IntPtr __instance, float value);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetHasMin@IConVar@@QEAA_NXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetHasMin@SSConVar@@QEAA_NXZ", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool GetHasMin(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetHasMin@IConVar@@QEAAX_N@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetHasMin@SSConVar@@QEAAX_N@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void SetHasMin(__IntPtr __instance, bool has);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetMax@IConVar@@QEAAMXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetMax@SSConVar@@QEAAMXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern float GetMax(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetMax@IConVar@@QEAAXM@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetMax@SSConVar@@QEAAXM@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void SetMax(__IntPtr __instance, float value);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetHasMax@IConVar@@QEAA_NXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetHasMax@SSConVar@@QEAA_NXZ", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool GetHasMax(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetHasMax@IConVar@@QEAAX_N@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetHasMax@SSConVar@@QEAAX_N@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void SetHasMax(__IntPtr __instance, bool has);
         }
 
         public __IntPtr __Instance { get; protected set; }
 
-        internal static readonly new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::SourceSharp.Core.Bridges.IConVar> NativeToManagedMap =
-            new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::SourceSharp.Core.Bridges.IConVar>();
+        internal static readonly new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::SourceSharp.Core.Bridges.SSConVar> NativeToManagedMap =
+            new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::SourceSharp.Core.Bridges.SSConVar>();
 
-        internal static void __RecordNativeToManagedMapping(IntPtr native, global::SourceSharp.Core.Bridges.IConVar managed)
+        internal static void __RecordNativeToManagedMapping(IntPtr native, global::SourceSharp.Core.Bridges.SSConVar managed)
         {
             NativeToManagedMap[native] = managed;
         }
 
-        internal static bool __TryGetNativeToManagedMapping(IntPtr native, out global::SourceSharp.Core.Bridges.IConVar managed)
+        internal static bool __TryGetNativeToManagedMapping(IntPtr native, out global::SourceSharp.Core.Bridges.SSConVar managed)
         {
     
             return NativeToManagedMap.TryGetValue(native, out managed);
@@ -113,28 +113,28 @@ namespace SourceSharp.Core.Bridges
 
         protected bool __ownsNativeInstance;
 
-        internal static IConVar __CreateInstance(__IntPtr native, bool skipVTables = false)
+        internal static SSConVar __CreateInstance(__IntPtr native, bool skipVTables = false)
         {
             if (native == __IntPtr.Zero)
                 return null;
-            return new IConVar(native.ToPointer(), skipVTables);
+            return new SSConVar(native.ToPointer(), skipVTables);
         }
 
-        internal static IConVar __GetOrCreateInstance(__IntPtr native, bool saveInstance = false, bool skipVTables = false)
+        internal static SSConVar __GetOrCreateInstance(__IntPtr native, bool saveInstance = false, bool skipVTables = false)
         {
             if (native == __IntPtr.Zero)
                 return null;
             if (__TryGetNativeToManagedMapping(native, out var managed))
-                return (IConVar)managed;
+                return (SSConVar)managed;
             var result = __CreateInstance(native, skipVTables);
             if (saveInstance)
                 __RecordNativeToManagedMapping(native, result);
             return result;
         }
 
-        internal static IConVar __CreateInstance(__Internal native, bool skipVTables = false)
+        internal static SSConVar __CreateInstance(__Internal native, bool skipVTables = false)
         {
-            return new IConVar(native, skipVTables);
+            return new SSConVar(native, skipVTables);
         }
 
         private static void* __CopyValue(__Internal native)
@@ -144,33 +144,33 @@ namespace SourceSharp.Core.Bridges
             return ret.ToPointer();
         }
 
-        private IConVar(__Internal native, bool skipVTables = false)
+        private SSConVar(__Internal native, bool skipVTables = false)
             : this(__CopyValue(native), skipVTables)
         {
             __ownsNativeInstance = true;
             __RecordNativeToManagedMapping(__Instance, this);
         }
 
-        protected IConVar(void* native, bool skipVTables = false)
+        protected SSConVar(void* native, bool skipVTables = false)
         {
             if (native == null)
                 return;
             __Instance = new __IntPtr(native);
         }
 
-        public IConVar()
+        public SSConVar()
         {
-            __Instance = Marshal.AllocHGlobal(sizeof(global::SourceSharp.Core.Bridges.IConVar.__Internal));
+            __Instance = Marshal.AllocHGlobal(sizeof(global::SourceSharp.Core.Bridges.SSConVar.__Internal));
             __ownsNativeInstance = true;
             __RecordNativeToManagedMapping(__Instance, this);
         }
 
-        public IConVar(global::SourceSharp.Core.Bridges.IConVar _0)
+        public SSConVar(global::SourceSharp.Core.Bridges.SSConVar _0)
         {
-            __Instance = Marshal.AllocHGlobal(sizeof(global::SourceSharp.Core.Bridges.IConVar.__Internal));
+            __Instance = Marshal.AllocHGlobal(sizeof(global::SourceSharp.Core.Bridges.SSConVar.__Internal));
             __ownsNativeInstance = true;
             __RecordNativeToManagedMapping(__Instance, this);
-            *((global::SourceSharp.Core.Bridges.IConVar.__Internal*) __Instance) = *((global::SourceSharp.Core.Bridges.IConVar.__Internal*) _0.__Instance);
+            *((global::SourceSharp.Core.Bridges.SSConVar.__Internal*) __Instance) = *((global::SourceSharp.Core.Bridges.SSConVar.__Internal*) _0.__Instance);
         }
 
         public void Dispose()
@@ -365,17 +365,17 @@ namespace SourceSharp.Core.Bridges
             internal static extern void RegisterConVarHook([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pName);
         }
 
-        public static global::SourceSharp.Core.Bridges.IConVar CreateConVar(string pName, string pDefValue, string pDescription, int nFlags, bool bHasMin, float flMin, bool bHasMax, float flMax)
+        public static global::SourceSharp.Core.Bridges.SSConVar CreateConVar(string pName, string pDefValue, string pDescription, int nFlags, bool bHasMin, float flMin, bool bHasMax, float flMax)
         {
             var ___ret = __Internal.CreateConVar(pName, pDefValue, pDescription, nFlags, bHasMin, flMin, bHasMax, flMax);
-            var __result0 = global::SourceSharp.Core.Bridges.IConVar.__GetOrCreateInstance(___ret, false);
+            var __result0 = global::SourceSharp.Core.Bridges.SSConVar.__GetOrCreateInstance(___ret, false);
             return __result0;
         }
 
-        public static global::SourceSharp.Core.Bridges.IConVar FindConVar(string pName)
+        public static global::SourceSharp.Core.Bridges.SSConVar FindConVar(string pName)
         {
             var ___ret = __Internal.FindConVar(pName);
-            var __result0 = global::SourceSharp.Core.Bridges.IConVar.__GetOrCreateInstance(___ret, false);
+            var __result0 = global::SourceSharp.Core.Bridges.SSConVar.__GetOrCreateInstance(___ret, false);
             return __result0;
         }
 
