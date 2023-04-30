@@ -9,25 +9,31 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SourceSharp.Core;
 
 public static class Bootstrap
 {
-    private static readonly CancellationTokenSource CancellationTokenSource = new();
+    private static bool _isShutdown;
+    private static Task? _signalTask;
 
     [UnmanagedCallersOnly]
     public static int InitializeSourceSharp() => Initialize();
 
     [UnmanagedCallersOnly]
-    public static void ShutdownSourceSharp() => CancellationTokenSource.Cancel(false);
+    public static void ShutdownSourceSharp()
+    {
+        _isShutdown = true;
+        _signalTask?.Wait();
+    }
 
     public static int InitializeTest() => Initialize();
 
     private static int Initialize()
     {
+        _isShutdown = false;
+
         try
         {
             var root = Path.Combine(Path.GetDirectoryName(
@@ -49,6 +55,9 @@ public static class Bootstrap
                 ValidateOnBuild = true,
                 ValidateScopes = true
             });
+
+            Console.WriteLine("MaxClients is " + Bridges.SourceSharp.GetMaxClients());
+            Console.WriteLine("MaxHumanPlayers is " + Bridges.SourceSharp.GetMaxHumanPlayers());
 
             Boot(serviceProvider);
 
@@ -97,7 +106,7 @@ public static class Bootstrap
         // export caller invoker
         Invoker.Initialize(services);
 
-        Task.Run(async () => await SignalThread(services));
+        _signalTask = Task.Run(async () => await SignalThread(services));
     }
 
     private static async Task SignalThread(IServiceProvider services)
@@ -108,19 +117,18 @@ public static class Bootstrap
         {
             await Task.Delay(TimeSpan.FromMicroseconds(1));
 
-            if (!CancellationTokenSource.IsCancellationRequested)
+            if (_isShutdown)
             {
-                pluginManager.Signal();
-                continue;
+                // Shutdown !!!
+                foreach (var module in services.GetAllServices<IModuleBase>())
+                {
+                    module.Shutdown();
+                }
+                services.GetRequiredService<IPluginManager>().Shutdown();
+                return;
             }
 
-            // Shutdown !!!
-            foreach (var module in services.GetAllServices<IModuleBase>())
-            {
-                module.Shutdown();
-            }
-            services.GetRequiredService<IPluginManager>().Shutdown();
-            break;
+            pluginManager.Signal();
         }
     }
 }

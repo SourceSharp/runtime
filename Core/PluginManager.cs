@@ -98,9 +98,6 @@ internal sealed class PluginManager : IPluginManager
                 {
                     listener.OnPluginLoad(plugin);
                 }
-
-                _plugins.Add(plugin);
-                // _sourceSharp.PrintLine($"Plugin <{name}> checked.");
             }
             catch (Exception e)
             {
@@ -139,7 +136,7 @@ internal sealed class PluginManager : IPluginManager
     {
         foreach (var plugin in _plugins)
         {
-            UnloadPlugin(plugin);
+            UnloadPlugin(plugin, false);
         }
 
         _plugins.Clear();
@@ -184,7 +181,7 @@ internal sealed class PluginManager : IPluginManager
         }
     }
 
-    private void UnloadPlugin(CPlugin plugin)
+    private void UnloadPlugin(CPlugin plugin, bool remove)
     {
         try
         {
@@ -208,7 +205,11 @@ internal sealed class PluginManager : IPluginManager
             plugin.Instance.OnShutdown();
             plugin.Loader.Dispose();
             plugin.UpdateStatus(PluginStatus.None);
-            _plugins.Remove(plugin);
+
+            if (remove)
+            {
+                _plugins.Remove(plugin);
+            }
         }
         catch (Exception e)
         {
