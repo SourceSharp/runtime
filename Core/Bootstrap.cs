@@ -30,22 +30,14 @@ public static class Bootstrap
     {
         try
         {
-            Console.WriteLine("SourceSharp Path: " + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-            Console.WriteLine("GetGamePath: " + Bridges.SourceSharp.GetGamePath());
+            var root = Path.Combine(Path.GetDirectoryName(
+                    Assembly.GetExecutingAssembly().Location)!,
+                    Bridges.SourceSharp.GetGamePath(),
+                    "addons",
+                    "sourcesharp");
 
-            // bin
-            var dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!;
-            // root
-            var parent = Directory.GetParent(dir)!.Name;
             // config
-            var path = Path.Combine(parent, "configs", "core.json");
-
-#if DEBUG
-            if (!File.Exists(path))
-            {
-                path = Path.Combine(dir, "config.json");
-            }
-#endif
+            var path = Path.Combine(root, "configs", "core.json");
 
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().AddJsonFile(path).Build();

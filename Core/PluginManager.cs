@@ -36,7 +36,9 @@ internal sealed class PluginManager : IPluginManager
     {
         _listeners.AddRange(_services.GetServices<IListenerBase>());
 
-        foreach (var path in Directory.GetDirectories(Path.Combine("plugins"), "*", SearchOption.TopDirectoryOnly))
+        var sourceSharpRoot = Path.Combine(_sourceSharp.GetRootPath(), _sourceSharp.GetGamePath(), "addons", "sourcesharp");
+
+        foreach (var path in Directory.GetDirectories(Path.Combine(sourceSharpRoot, "plugins"), "*", SearchOption.TopDirectoryOnly))
         {
             CPlugin? plugin = null;
             var name = Path.GetFileName(path);

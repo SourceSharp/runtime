@@ -37,10 +37,10 @@
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     </PropertyGroup>
     <ItemGroup>
-        <None Remove="config.json" />
+        <None Remove="core.json" />
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="config.json">
+        <EmbeddedResource Include="core.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
     </ItemGroup>

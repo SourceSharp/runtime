@@ -38,7 +38,6 @@ jobs:
 
     - name: Build
       shell: bash
-      #dotnet build Core/core.csproj -f net7.0 -r win-x86 -c Debug --no-self-contained --output .deploy
       run: |
         COMMIT_VERSION=$(git rev-list --count HEAD)
         dotnet build PluginExample/PluginExample.csproj -f net7.0 -r ${{ matrix.target }} --no-self-contained -c Release

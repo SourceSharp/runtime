@@ -398,7 +398,8 @@ FodyWeavers.xsd
 *.sln.iml
 .idea
 
-# Counter
+# VS Code
+.vscode
 .VSCodeCounter
 
 # Build
