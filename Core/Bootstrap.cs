@@ -6,6 +6,7 @@ using SourceSharp.Core.Modules;
 using SourceSharp.Core.Utils;
 using SourceSharp.Sdk.Interfaces;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -56,8 +57,8 @@ public static class Bootstrap
                 ValidateScopes = true
             });
 
-            Console.WriteLine("MaxClients is " + Bridges.SourceSharp.GetMaxClients());
-            Console.WriteLine("MaxHumanPlayers is " + Bridges.SourceSharp.GetMaxHumanPlayers());
+            Debug.Print("MaxClients is " + Bridges.SourceSharp.GetMaxClients());
+            Debug.Print("MaxHumanPlayers is " + Bridges.SourceSharp.GetMaxHumanPlayers());
 
             Boot(serviceProvider);
 
@@ -83,11 +84,12 @@ public static class Bootstrap
         services.AddSingleton<ISourceSharpBase, SourceSharp>();
         services.AddSingleton<IShareSystemBase, ShareSystem>();
 
-        services.AddSingleton<IGameEventListener, GameEventListener>();
+        services.AddSingleton<IAdminManager, AdminManager>();
         services.AddSingleton<ICommandListener, CommandListener>();
+        //services.AddSingleton<IConVarManager, ConVarManager>();
+        //services.AddSingleton<IGameEventListener, GameEventListener>();
         services.AddSingleton<IPlayerListener, PlayerListener>();
         services.AddSingleton<IPlayerManagerBase, PlayerManager>();
-        services.AddSingleton<IAdminManager, AdminManager>();
 
         services.AddSingleton<IPluginManager, PluginManager>();
     }
@@ -101,7 +103,7 @@ public static class Bootstrap
         }
 
         // Plugin Manager should be the LAST!
-        services.GetRequiredService<IPluginManager>().Initialize();
+        services.GetRequiredService<IPluginManager>().Initialize(services);
 
         // export caller invoker
         Invoker.Initialize(services);

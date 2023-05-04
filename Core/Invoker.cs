@@ -20,6 +20,7 @@ internal static class Invoker
     private static IPlayerManagerBase _playerManager;
     private static IPlayerListener _playerListener;
     private static IGameEventListener _gameEventListener;
+    private static IConVarManager _conVarManager;
 #nullable restore
 
     internal static void Initialize(IServiceProvider services)
@@ -29,7 +30,8 @@ internal static class Invoker
         _commandListener = services.GetRequiredService<ICommandListener>();
         _playerManager = services.GetRequiredService<IPlayerManagerBase>();
         _playerListener = services.GetRequiredService<IPlayerListener>();
-        _gameEventListener = services.GetRequiredService<IGameEventListener>();
+        //_gameEventListener = services.GetRequiredService<IGameEventListener>();
+        //_conVarManager = services.GetRequiredService<IConVarManager>();
     }
 
     /*
@@ -102,7 +104,7 @@ internal static class Invoker
 
         var args = argc > 0 ? Enumerable.Range(0, argc - 1).Select(index =>
         {
-            if (Marshal.PtrToStructure(IntPtr.Add(pArgs, index), typeof(IntPtr)) is IntPtr strPtr)
+            if (Marshal.PtrToStructure(IntPtr.Add(pArgs, index * sizeof(int)), typeof(IntPtr)) is IntPtr strPtr)
             {
                 var result = Marshal.PtrToStringAnsi(strPtr);
 
