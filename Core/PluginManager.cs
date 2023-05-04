@@ -30,7 +30,6 @@ internal sealed class PluginManager : IPluginManager
         _listeners = new();
     }
 
-    public void Initialize()
     public void Initialize(IServiceProvider services)
     {
         var listeners = services.GetAllServices<IListenerBase>();
@@ -78,8 +77,9 @@ internal sealed class PluginManager : IPluginManager
                 tPlugin.SetProtectedReadOnlyField("_sourceSharp", instance, _sourceSharp);
                 tPlugin.SetProtectedReadOnlyField("_shareSystem", instance, _shareSystem);
 
-                var frameHooks = tPlugin.GetMethods()
-                    .Where(m => Attribute.GetCustomAttributes(m, typeof(GameFrameAttribute)).Any())
+                var frameHooks = tPlugin
+                    .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
+                    .Where(m => m.GetCustomAttributes(typeof(GameFrameAttribute), false).Any())
                     .ToList();
 
                 if (frameHooks.Any())
@@ -115,7 +115,7 @@ internal sealed class PluginManager : IPluginManager
         {
             try
             {
-                if (plugin.Instance.QueryRunning())
+                if (!plugin.Instance.QueryRunning())
                 {
                     throw new InvalidOperationException();
                 }

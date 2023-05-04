@@ -48,8 +48,9 @@ internal class CKeyHook<TKey, TInfo, TAttribute, TCallReturn, TCallback>
     /// <param name="register">注册机</param>
     public void ScanPlugin(CPlugin plugin, Func<TAttribute, TInfo> convertInfo, Action<TKey>? register)
     {
-        var hooks = plugin.Instance.GetType().GetMethods()
-            .Where(m => Attribute.GetCustomAttributes(m, typeof(TAttribute)).Any())
+        var hooks = plugin.Instance.GetType()
+            .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
+            .Where(m => m.GetCustomAttributes(typeof(TAttribute), false).Any())
             .ToList();
 
         if (!hooks.Any())
