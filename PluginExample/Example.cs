@@ -3,6 +3,7 @@ using SourceSharp.Sdk.Attributes;
 using SourceSharp.Sdk.Enums;
 using SourceSharp.Sdk.Interfaces;
 using SourceSharp.Sdk.Models;
+using SourceSharp.Sdk.Structs;
 using System.Reflection;
 
 namespace SourceSharp.Example;
@@ -51,8 +52,11 @@ public class Example : PluginBase, IExportInterface
         => _sourceSharp.LogMessage("test command executed: " + command.ArgString);
 
     [GameEvent("player_spawn")]
-    private void OnPlayerSpawn(GameEvent @event)
-        => _sourceSharp.LogMessage("player spawned -> userId: " + @event.Get<int>("userid"));
+    private ActionResponse<bool> OnPlayerSpawn(GameEvent @event)
+    {
+        _sourceSharp.LogMessage("player spawned -> userId: " + @event.Get<int>("userid"));
+        return default;
+    }
 
     [GameFrame]
     private void OnGameFrame(bool simulating)
