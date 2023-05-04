@@ -1,5 +1,4 @@
 ﻿using McMaster.NETCore.Plugins;
-using Microsoft.Extensions.DependencyInjection;
 using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
 using SourceSharp.Core.Utils;
@@ -10,21 +9,20 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace SourceSharp.Core;
 
 internal sealed class PluginManager : IPluginManager
 {
-    private readonly IServiceProvider _services;
     private readonly ISourceSharpBase _sourceSharp;
     private readonly IShareSystemBase _shareSystem;
 
     private readonly List<CPlugin> _plugins;
     private readonly List<IListenerBase> _listeners;
 
-    public PluginManager(ISourceSharpBase sourceSharp, IShareSystemBase shareSystem, IServiceProvider services)
+    public PluginManager(ISourceSharpBase sourceSharp, IShareSystemBase shareSystem)
     {
-        _services = services;
         _sourceSharp = sourceSharp;
         _shareSystem = shareSystem;
 
@@ -33,8 +31,10 @@ internal sealed class PluginManager : IPluginManager
     }
 
     public void Initialize()
+    public void Initialize(IServiceProvider services)
     {
-        _listeners.AddRange(_services.GetServices<IListenerBase>());
+        var listeners = services.GetAllServices<IListenerBase>();
+        _listeners.AddRange(listeners);
 
         var sourceSharpRoot = Path.Combine(_sourceSharp.GetRootPath(), _sourceSharp.GetGamePath(), "addons", "sourcesharp");
 

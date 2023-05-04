@@ -1,8 +1,10 @@
-﻿namespace SourceSharp.Core.Interfaces;
+﻿using System;
+
+namespace SourceSharp.Core.Interfaces;
 
 internal interface IPluginManager
 {
-    void Initialize();
+    void Initialize(IServiceProvider services);
     void Shutdown();
     void Signal();
 
