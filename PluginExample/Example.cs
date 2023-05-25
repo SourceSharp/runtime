@@ -43,6 +43,10 @@ public class Example : PluginBase, IExportInterface
     public override void OnShutdown()
         => _sourceSharp.LogMessage("plugin unloaded");
 
+    [ClientConsoleCommand("say", "Say Command")]
+    private void TestHookSayCommand(ConsoleCommand command, GamePlayer? player)
+        => _sourceSharp.LogMessage("say command executed: " + command.ArgString);
+
     [ServerConsoleCommand("ss_s_test", "测试命令")]
     private void TestServerCommand(ConsoleCommand command)
         => _sourceSharp.LogMessage("test command executed: " + command.ArgString);
