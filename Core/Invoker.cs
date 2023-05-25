@@ -97,12 +97,13 @@ internal static class Invoker
     {
         var argString = Marshal.PtrToStringAnsi(pArgString);
 
-        if (argString is null)
+        if (argString is null || argc < 1)
         {
+            _sourceSharp.LogError("Failed to parse command: ArgS or ArgC is invalid");
             return null;
         }
 
-        var args = argc > 0 ? Enumerable.Range(0, argc - 1).Select(index =>
+        var args = Enumerable.Range(0, argc).Select(index =>
         {
             if (Marshal.PtrToStructure(IntPtr.Add(pArgs, index * sizeof(int)), typeof(IntPtr)) is IntPtr strPtr)
             {
@@ -115,7 +116,7 @@ internal static class Invoker
             }
 
             return string.Empty;
-        }).ToArray() : new[] { argString };
+        }).ToArray();
 
         return new ConsoleCommand(argString, args, argc);
     }
