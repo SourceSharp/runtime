@@ -133,7 +133,7 @@ internal class ConVarManager : IConVarManager
 
                 return new ConVarHookInfo(conVar);
             },
-            ConVarBridge.RegisterConVarHook);
+            name => ConVarBridge.RegisterConVarHook(name));
 
     /*
      *  IRuntime

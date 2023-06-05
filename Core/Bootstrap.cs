@@ -86,7 +86,7 @@ public static class Bootstrap
 
         services.AddSingleton<IAdminManager, AdminManager>();
         services.AddSingleton<ICommandListener, CommandListener>();
-        //services.AddSingleton<IConVarManager, ConVarManager>();
+        services.AddSingleton<IConVarManager, ConVarManager>();
         //services.AddSingleton<IGameEventListener, GameEventListener>();
         services.AddSingleton<IPlayerListener, PlayerListener>();
         services.AddSingleton<IPlayerManagerBase, PlayerManager>();

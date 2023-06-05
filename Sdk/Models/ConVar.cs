@@ -60,6 +60,11 @@ public abstract class ConVar
     /// <returns>True = 成功</returns>
     public abstract bool ReplicateToPlayers(GamePlayer[] players);
 
+    /// <summary>
+    /// 订阅修改事件
+    /// </summary>
+    public abstract event Action<ConVar, string, string> OnChanged;
+
     protected abstract ConVarBounds GetBounds();
     protected abstract void SetBounds(ConVarBounds bounds);
     protected abstract string GetDescription();

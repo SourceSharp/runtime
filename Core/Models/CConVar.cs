@@ -13,6 +13,7 @@ internal class CConVar : ConVar
     private readonly SSConVar _conVar;
     private readonly string _name;
     private readonly string _description;
+    public override event Action<ConVar, string, string>? OnChanged;
 
     public CConVar(SSConVar conVar, string name, string description)
     {

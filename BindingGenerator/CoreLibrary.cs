@@ -26,6 +26,7 @@ public class CoreLibrary : ILibrary
         var projectFolder = Environment.GetEnvironmentVariable("SOURCESHARP")!;
 
         var options = driver.Options;
+        options.Verbose = true;
         options.GeneratorKind = GeneratorKind.CSharp;
         options.OutputDir = Path.Combine(projectFolder, "runtime", "Core", "Bridges");
 
@@ -46,7 +47,8 @@ public class CoreLibrary : ILibrary
 
     public void SetupPasses(Driver driver)
     {
-
+        driver.Context.TranslationUnitPasses.AddPass(new CppSharp.Passes.FunctionToInstanceMethodPass());
+        driver.Context.TranslationUnitPasses.AddPass(new CppSharp.Passes.FunctionToStaticMethodPass());
     }
 
 }

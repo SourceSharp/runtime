@@ -31,7 +31,7 @@ internal static class Invoker
         _playerManager = services.GetRequiredService<IPlayerManagerBase>();
         _playerListener = services.GetRequiredService<IPlayerListener>();
         //_gameEventListener = services.GetRequiredService<IGameEventListener>();
-        //_conVarManager = services.GetRequiredService<IConVarManager>();
+        _conVarManager = services.GetRequiredService<IConVarManager>();
     }
 
     /*
@@ -119,6 +119,18 @@ internal static class Invoker
         }).ToArray();
 
         return new ConsoleCommand(argString, args, argc);
+    }
+
+    #endregion
+
+    #region ConVar
+
+    [UnmanagedCallersOnly]
+    public static void OnConVarChanged([DNNE.C99Type("const char*")] IntPtr pName,
+        [DNNE.C99Type("const char*")] IntPtr pOldValue,
+        [DNNE.C99Type("const char*")] IntPtr pNewValue)
+    {
+
     }
 
     #endregion

@@ -31,6 +31,10 @@ public class Example : PluginBase, IExportInterface
     {
         _sourceSharp.LogMessage("plugin loaded");
         _shareSystem.AddInterface(this, this);
+
+        ss_plugin_example.OnChanged += (var, oldValue, newValue) =>
+            _sourceSharp.LogMessage($"ConVar [{var.Name}] -> old<{oldValue}> -> new<{newValue}");
+
         return true;
     }
 
