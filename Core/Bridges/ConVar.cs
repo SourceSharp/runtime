@@ -98,17 +98,23 @@ namespace SourceSharp.Core.Bridges
             [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "??0SSConVar@@QEAA@AEBV0@@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr cctor(__IntPtr __instance, __IntPtr _0);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?ReplicateToPlayers@SSConVar@@QEAA_NQEBHH@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?ReplicateToPlayers@SSConVar@@QAE_NQBHH@Z", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool ReplicateToPlayers(__IntPtr __instance, int[] pPlayers, int nPlayers);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetDescription@SSConVar@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetName@SSConVar@@QAEPBDXZ", CallingConvention = __CallingConvention.Cdecl)]
+            internal static extern __IntPtr GetName(__IntPtr __instance);
+
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetDefault@SSConVar@@QAEPBDXZ", CallingConvention = __CallingConvention.Cdecl)]
+            internal static extern __IntPtr GetDefault(__IntPtr __instance);
+
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetDescription@SSConVar@@QAEPBDXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr GetDescription(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetString@SSConVar@@QEAAPEBDXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetString@SSConVar@@QAEPBDXZ", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern __IntPtr GetString(__IntPtr __instance);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetString@SSConVar@@QEAAXPEBD@Z", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetString@SSConVar@@QAEXPBD@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void SetString(__IntPtr __instance, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(CppSharp.Runtime.UTF8Marshaller))] string pValue);
 
             [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetFloat@SSConVar@@QEAAMXZ", CallingConvention = __CallingConvention.Cdecl)]
@@ -123,7 +129,7 @@ namespace SourceSharp.Core.Bridges
             [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?SetInt@SSConVar@@QEAAXH@Z", CallingConvention = __CallingConvention.Cdecl)]
             internal static extern void SetInt(__IntPtr __instance, int value);
 
-            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetBool@SSConVar@@QEAA_NXZ", CallingConvention = __CallingConvention.Cdecl)]
+            [SuppressUnmanagedCodeSecurity, DllImport("sourcesharp", EntryPoint = "?GetBool@SSConVar@@QAE_NXZ", CallingConvention = __CallingConvention.Cdecl)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool GetBool(__IntPtr __instance);
 
@@ -268,6 +274,24 @@ namespace SourceSharp.Core.Bridges
         {
             var ___ret = __Internal.ReplicateToPlayers(__Instance, pPlayers, nPlayers);
             return ___ret;
+        }
+
+        public string Name
+        {
+            get
+            {
+                var ___ret = __Internal.GetName(__Instance);
+                return CppSharp.Runtime.MarshalUtil.GetString(global::System.Text.Encoding.UTF8, ___ret);
+            }
+        }
+
+        public string Default
+        {
+            get
+            {
+                var ___ret = __Internal.GetDefault(__Instance);
+                return CppSharp.Runtime.MarshalUtil.GetString(global::System.Text.Encoding.UTF8, ___ret);
+            }
         }
 
         public string Description

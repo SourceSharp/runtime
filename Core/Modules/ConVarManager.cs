@@ -1,6 +1,7 @@
 ﻿using SourceSharp.Core.Bridges;
 using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
+using SourceSharp.Core.Utils;
 using SourceSharp.Sdk;
 using SourceSharp.Sdk.Attributes;
 using SourceSharp.Sdk.Enums;
@@ -111,6 +112,7 @@ internal class ConVarManager : IConVarManager
             }
 
             var conVar = new CConVar(iCvar, iCvar.Name, iCvar.Description);
+            plugin.Instance.GetType().SetReadonlyProperty(cvarAttr.Name, plugin.Instance, conVar);
             _conVars.Add(conVar);
         }
     }

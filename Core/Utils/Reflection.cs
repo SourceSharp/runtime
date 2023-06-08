@@ -39,6 +39,17 @@ internal static class Reflection
         field.SetValue(instance, value);
     }
 
+    public static void SetReadonlyProperty(this Type type, string name, object instance, object value)
+    {
+        var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+
+        var fName = $"<{name}>k__BackingField";
+        var field = type.GetField(fName, BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?? throw new MissingFieldException(type.FullName, fName);
+
+        field.SetValue(instance, value);
+    }
+
     public static IEnumerable<T> GetAllServices<T>(this IServiceProvider provider)
     {
         var site = typeof(ServiceProvider).GetProperty("CallSiteFactory", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(provider)!;

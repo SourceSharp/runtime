@@ -21,7 +21,7 @@ public class Example : PluginBase, IExportInterface
     [ConVar("ss_plugin_example", "0")]
     public ConVar ss_plugin_example { get; } = null!;
 
-    [ConVar("test_convar", "1",
+    [ConVar("test_convar", "0",
         Description = "测试",
         Flags = ConVarFlags.Notify | ConVarFlags.Replicated,
         HasMin = true, Min = 0f, HasMax = true, Max = 999f)]
@@ -68,7 +68,12 @@ public class Example : PluginBase, IExportInterface
 
     [GameFrame]
     private void OnGameFrame(bool simulating)
-        => _sourceSharp.LogMessage($"OnGameFrame({simulating})");
+    {
+        if (test_convar.Get<bool>())
+        {
+            _sourceSharp.LogMessage($"OnGameFrame({simulating})");
+        }
+    }
 
     [PlayerListener(PlayerListenerType.Connected)]
     private void OnPlayerConnected(GamePlayer player)
