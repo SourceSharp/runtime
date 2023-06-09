@@ -130,7 +130,17 @@ internal static class Invoker
         [DNNE.C99Type("const char*")] IntPtr pOldValue,
         [DNNE.C99Type("const char*")] IntPtr pNewValue)
     {
+        var name = Marshal.PtrToStringAnsi(pName);
+        var oldV = Marshal.PtrToStringAnsi(pOldValue);
+        var newV = Marshal.PtrToStringAnsi(pNewValue);
 
+        if (name is null || oldV is null || newV is null)
+        {
+            // null
+            return;
+        }
+
+        _conVarManager.OnConVarChanged(name, oldV, newV);
     }
 
     #endregion

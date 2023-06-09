@@ -32,8 +32,9 @@ public class Example : PluginBase, IExportInterface
         _sourceSharp.LogMessage("plugin loaded");
         _shareSystem.AddInterface(this, this);
 
-        ss_plugin_example.OnChanged += (var, oldValue, newValue) =>
-            _sourceSharp.LogMessage($"ConVar [{var.Name}] -> old<{oldValue}> -> new<{newValue}");
+        ss_plugin_example.RegisterChangeHook(this,
+            (var, oldValue, newValue) =>
+                _sourceSharp.LogMessage($"ConVar [{var.Name}] -> old<{oldValue}> -> new<{newValue}"));
 
         return true;
     }
@@ -80,8 +81,8 @@ public class Example : PluginBase, IExportInterface
         => _sourceSharp.LogMessage("player connected -> name: " + player.Name);
 
     [ConVarChanged("sv_cheats")]
-    [ConVarChanged("mp_allow_bot")]
-    public void OnConVarChanged(ConVar conVar, string oldValue, string newValue)
+    [ConVarChanged("mp_timelimit")]
+    private void OnConVarChanged(ConVar conVar, string oldValue, string newValue)
         => _sourceSharp.LogMessage($"ConVarChanged -> {conVar.Name} = {newValue} (old: {oldValue})");
 
     /*

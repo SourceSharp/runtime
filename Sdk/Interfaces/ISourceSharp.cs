@@ -98,7 +98,7 @@ public interface ISourceSharp : IRuntime
     /// </summary>
     /// <param name="name">ConVar名</param>
     /// <returns>ConVar实例</returns>
-    ConVar FindConVar(string name);
+    ConVar? FindConVar(string name);
 
     /// <summary>
     /// 创建游戏事件.
@@ -108,5 +108,5 @@ public interface ISourceSharp : IRuntime
     /// <param name="name">事件名</param>
     /// <param name="broadcast">设置默认发送值</param>
     /// <returns>GameEvent实例</returns>
-    GameEvent CreateEvent(string name, bool broadcast);
+    GameEvent? CreateEvent(string name, bool broadcast);
 }

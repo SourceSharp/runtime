@@ -1,4 +1,5 @@
 ﻿using SourceSharp.Sdk.Enums;
+using SourceSharp.Sdk.Interfaces;
 using SourceSharp.Sdk.Structs;
 using System;
 
@@ -18,11 +19,13 @@ public abstract class ConVar
     /// <summary>
     /// Flags
     /// </summary>
-    public ConVarFlags Flags
-    {
-        get => GetFlags();
-        set => SetFlags(value);
-    }
+    public ConVarFlags Flags => GetFlags();
+
+    /// <summary>
+    /// 新增Flags
+    /// </summary>
+    /// <param name="flags"><see cref="ConVarFlags"/>flags</param>
+    public abstract void AddFlags(ConVarFlags flags);
 
     /// <summary>
     /// 名字
@@ -63,13 +66,12 @@ public abstract class ConVar
     /// <summary>
     /// 订阅修改事件
     /// </summary>
-    public abstract event Action<ConVar, string, string> OnChanged;
+    public abstract void RegisterChangeHook(IPlugin caller, Action<ConVar, string, string> callback);
 
     protected abstract ConVarBounds GetBounds();
     protected abstract void SetBounds(ConVarBounds bounds);
     protected abstract string GetDescription();
     protected abstract string GetDefaultValue();
     protected abstract ConVarFlags GetFlags();
-    protected abstract void SetFlags(ConVarFlags flags);
     protected abstract string GetName();
 }

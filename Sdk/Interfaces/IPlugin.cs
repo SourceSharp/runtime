@@ -1,4 +1,6 @@
-﻿namespace SourceSharp.Sdk.Interfaces;
+﻿using System;
+
+namespace SourceSharp.Sdk.Interfaces;
 
 public interface IPlugin
 {
@@ -29,6 +31,11 @@ public interface IPlugin
     /// </summary>
     /// <param name="interface">interface 实例</param>
     void NotifyInterfaceDrop(IRuntime @interface);
+
+    /// <summary>
+    /// 获取插件唯一标识符 (Once load)
+    /// </summary>
+    Guid GetUniqueId();
 }
 
 public abstract class PluginBase : IPlugin
@@ -62,4 +69,7 @@ public abstract class PluginBase : IPlugin
     {
 
     }
+
+    private readonly Guid _uniqueId = Guid.NewGuid();
+    public Guid GetUniqueId() => _uniqueId;
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SourceSharp.Core.Models;
+using SourceSharp.Sdk.Interfaces;
+using System;
 
 namespace SourceSharp.Core.Interfaces;
 
@@ -10,4 +12,7 @@ internal interface IPluginManager
 
     // invoker
     void OnGameFrame(bool simulating);
+
+    // native
+    CPlugin? FindPlugin(IPlugin plugin);
 }

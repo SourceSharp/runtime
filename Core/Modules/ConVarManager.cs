@@ -1,5 +1,4 @@
-﻿using SourceSharp.Core.Bridges;
-using SourceSharp.Core.Interfaces;
+﻿using SourceSharp.Core.Interfaces;
 using SourceSharp.Core.Models;
 using SourceSharp.Core.Utils;
 using SourceSharp.Sdk;
@@ -41,10 +40,12 @@ internal class ConVarManager : IConVarManager
     private readonly List<CConVar> _conVars;
 
     private readonly ISourceSharpBase _sourceSharp;
+    private readonly IPluginManager _pluginManager;
 
-    public ConVarManager(ISourceSharpBase sourceSharp)
+    public ConVarManager(ISourceSharpBase sourceSharp, IPluginManager pluginManager)
     {
         _sourceSharp = sourceSharp;
+        _pluginManager = pluginManager;
 
         _conVars = new();
         _hooks = new();
@@ -68,10 +69,20 @@ internal class ConVarManager : IConVarManager
     }
 
     public void OnPluginUnload(CPlugin plugin)
-        => _hooks.RemovePlugin(plugin);
+    {
+        _hooks.RemovePlugin(plugin);
+        _conVars.ForEach(conVar => conVar.RemoveHook(plugin.Instance));
+    }
 
-    public void OnConVarChanged(SSConVar conVar, string oldValue, string newValue)
-        => _hooks.OnCall(conVar.Name, false, hooks =>
+    public void OnConVarChanged(string name, string oldValue, string newValue)
+    {
+        var conVar = _conVars.Find(x => x.Name == name);
+        if (conVar is null)
+        {
+            return;
+        }
+
+        _hooks.OnCall(conVar.Name, false, hooks =>
         {
             foreach (var hook in hooks)
             {
@@ -80,6 +91,23 @@ internal class ConVarManager : IConVarManager
 
             return true;
         });
+    }
+
+    public CConVar? FindConVar(string name)
+    {
+        var conVar = _conVars.Find(x => x.Name == name);
+        if (conVar is null)
+        {
+            var iCvar = ConVarBridge.FindConVar(name);
+            if (iCvar is null)
+            {
+                // does not exists
+                return null;
+            }
+            conVar = new(iCvar, iCvar.Name, iCvar.Description);
+        }
+        return conVar;
+    }
 
     private void RegConVars(CPlugin plugin)
     {

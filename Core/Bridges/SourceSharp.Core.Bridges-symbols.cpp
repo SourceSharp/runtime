@@ -1,4 +1,4 @@
-#include <ConVar.h>
+#include <Event.h>
 #include <new>
 
-class SSConVar& (SSConVar::*_0)(class SSConVar&&) = &SSConVar::operator=;
+class SSGameEvent& (SSGameEvent::*_0)(class SSGameEvent&&) = &SSGameEvent::operator=;

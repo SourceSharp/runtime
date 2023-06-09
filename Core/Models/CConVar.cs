@@ -1,25 +1,32 @@
 ﻿using SourceSharp.Core.Bridges;
 using SourceSharp.Sdk.Enums;
+using SourceSharp.Sdk.Interfaces;
 using SourceSharp.Sdk.Models;
 using SourceSharp.Sdk.Structs;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using ConVar = SourceSharp.Sdk.Models.ConVar;
 
 namespace SourceSharp.Core.Models;
 
-internal class CConVar : ConVar
+internal record ConVarHook(IPlugin Plugin, Action<ConVar, string, string> Callback);
+
+internal sealed class CConVar : ConVar
 {
+
     private readonly SSConVar _conVar;
     private readonly string _name;
     private readonly string _description;
-    public override event Action<ConVar, string, string>? OnChanged;
+    private readonly List<ConVarHook> _callbacks;
 
     public CConVar(SSConVar conVar, string name, string description)
     {
         _conVar = conVar;
         _name = name;
         _description = description;
+
+        _callbacks = new();
     }
 
     public override T Get<T>()
@@ -75,6 +82,26 @@ internal class CConVar : ConVar
         return _conVar.ReplicateToPlayers(playerIndex, playerIndex.Length);
     }
 
+    public override void AddFlags(ConVarFlags flags) => _conVar.AddFlags((int)flags);
+
+    public override void RegisterChangeHook(IPlugin plugin, Action<ConVar, string, string> callback)
+    {
+        Bridges.ConVar.RegisterConVarHook(_name);
+        _callbacks.Add(new ConVarHook(plugin, callback));
+    }
+
+    internal void Invoke(string oldValue, string newValue) =>
+        _callbacks.ForEach(hook =>
+        {
+            // TODO plugin status check
+
+            try
+            {
+                hook.Callback.Invoke(this, oldValue, newValue);
+            }
+            catch { }
+        });
+
     protected override string GetName() => _name;
 
     protected override string GetDescription() => _description;
@@ -83,12 +110,11 @@ internal class CConVar : ConVar
 
     protected override ConVarFlags GetFlags() => (ConVarFlags)_conVar.Flags;
 
-    protected override void SetFlags(ConVarFlags flags) => _conVar.Flags = (int)flags;
-
-    protected override ConVarBounds GetBounds() => new(_conVar.Min, _conVar.Max, _conVar.HasMin, _conVar.HasMax);
+    protected override ConVarBounds GetBounds() => new(_conVar.MinValue, _conVar.MaxValue, _conVar.HasMin, _conVar.HasMax);
 
     protected override void SetBounds(ConVarBounds bounds)
     {
+#if false
         if (bounds.HasMin)
         {
             _conVar.HasMin = true;
@@ -107,6 +133,20 @@ internal class CConVar : ConVar
         else
         {
             _conVar.HasMax = false;
+        }
+#endif
+
+        // TODO
+        throw new NotImplementedException();
+    }
+
+    // Internal Api
+    internal void RemoveHook(IPlugin iPlugin)
+    {
+        var hooks = _callbacks.Where(x => x.Plugin == iPlugin);
+        foreach (var hook in hooks)
+        {
+            _callbacks.Remove(hook);
         }
     }
 }

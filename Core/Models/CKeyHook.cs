@@ -60,14 +60,23 @@ internal class CKeyHook<TKey, TInfo, TAttribute, TCallReturn, TCallback>
 
         foreach (var hook in hooks)
         {
-            if (Attribute.GetCustomAttribute(hook, typeof(TAttribute)) is not TAttribute t)
+            var attrs = Attribute.GetCustomAttributes(hook, typeof(TAttribute));
+            if (!attrs.Any())
             {
                 continue;
             }
 
-            if (Subscribe(t.Key, plugin, convertInfo(t), hook))
+            foreach (var vt in attrs)
             {
-                register?.Invoke(t.Key);
+                if (vt is not TAttribute t)
+                {
+                    continue;
+                }
+
+                if (Subscribe(t.Key, plugin, convertInfo(t), hook))
+                {
+                    register?.Invoke(t.Key);
+                }
             }
         }
     }

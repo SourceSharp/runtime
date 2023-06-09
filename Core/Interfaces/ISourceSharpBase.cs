@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using ConVarBridge = SourceSharp.Core.Bridges.ConVar;
 using CoreBridge = SourceSharp.Core.Bridges.SourceSharp;
 using EventBridge = SourceSharp.Core.Bridges.Event;
 
@@ -126,11 +125,7 @@ internal abstract class SourceSharpBase : ISourceSharpBase
     public void ServerExecute()
         => CoreBridge.ServerExecute();
 
-    public ConVar FindConVar(string name)
-    {
-        var iCvar = ConVarBridge.FindConVar(name);
-        return new CConVar(iCvar, iCvar.Name, iCvar.Description);
-    }
+    public abstract ConVar? FindConVar(string name);
 
     public GameEvent CreateEvent(string name, bool broadcast)
     {

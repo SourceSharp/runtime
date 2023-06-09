@@ -1,4 +1,6 @@
-﻿using SourceSharp.Core.Interfaces;
+﻿using Microsoft.Extensions.DependencyInjection;
+using SourceSharp.Core.Interfaces;
+using SourceSharp.Sdk.Models;
 using System;
 using System.Collections.Concurrent;
 
@@ -8,11 +10,13 @@ internal sealed class SourceSharp : SourceSharpBase
 {
     private readonly int _masterThreadId;
     private readonly ConcurrentQueue<Action> _invokes;
+    private readonly IServiceProvider _service;
 
-    public SourceSharp()
+    public SourceSharp(IServiceProvider service)
     {
         _masterThreadId = Environment.CurrentManagedThreadId;
         _invokes = new();
+        _service = service;
     }
 
     public override void RunFrame()
@@ -33,6 +37,12 @@ internal sealed class SourceSharp : SourceSharpBase
         {
             _invokes.Enqueue(action);
         }
+    }
+
+    public override ConVar? FindConVar(string name)
+    {
+        var cm = _service.GetRequiredService<IConVarManager>();
+        return cm.FindConVar(name);
     }
 
     public override void InvokeNextFrame(Action action)
